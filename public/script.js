@@ -13,6 +13,7 @@ import {
   collection,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc,
   query,
   orderBy,
@@ -152,15 +153,15 @@ document.getElementById("locForm").addEventListener("submit", async (e) => {
   const form = e.target;
   const id = form.dataset.editingId;
   const data = {
-    location: document.getElementById("location").value,
+    name: document.getElementById("location").value,
     userId: auth.currentUser.uid
   };
   try {
     const ref = query(collection(db, "location"));
     if (id) {
-      await ref.doc(id).update(data);
+      await updateDoc(doc(db, "location", id, data))
     } else {
-      await ref.add(data);
+      await addDoc(collection(db, "location"), data);
     }
     form.reset();
     delete form.dataset.editingId;
@@ -188,9 +189,9 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
   try {
     const ref = query(collection(db, "work"));
     if (id) {
-      await ref.doc(id).update(data);
+      await updateDoc(doc(db, "work", id, data))
     } else {
-      await ref.add(data);
+      await addDoc(collection(db, "work"), data);
     }
     form.reset();
     delete form.dataset.editingId;
