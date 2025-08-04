@@ -23,9 +23,9 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 import { } from "/utils.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -54,7 +54,7 @@ auth.onAuthStateChanged(user => {
 });
 
 loginBtn.onclick = () => {
-  const provider = new auth.GoogleAuthProvider();
+  const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
 };
 
