@@ -1,25 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { } from "/utils.js";
 
@@ -53,12 +31,8 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-loginBtn.onclick = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-};
-
-logoutBtn.onclick = () => auth.signOut();
+loginBtn.onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
+logoutBtn.onclick = () => signOut(auth);
 
 openFormBtn.onclick = () => {
   modal.style.display = "block";
