@@ -1,8 +1,5 @@
 name: Deploy to Firebase TEST
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
