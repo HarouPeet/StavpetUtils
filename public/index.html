@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work Journal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Work Journal</h1>
+  <button id="loginBtn">Login with Google</button>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+
+  <form id="entryForm" style="display:none;">
+    <input type="text" id="location" placeholder="Location" required />
+    <input type="text" id="weather" placeholder="Weather" required />
+    <textarea id="comments" placeholder="Comments"></textarea>
+    <input type="file" id="photo" accept="image/*" />
+    <button type="submit">Add Entry</button>
+  </form>
+
+  <div id="entries"></div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
