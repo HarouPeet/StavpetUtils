@@ -23,91 +23,182 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 import { } from "/utils.js";
 
+firebase.initializeApp(firebaseConfig);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
-const entryForm = document.getElementById("entryForm");
-const entriesDiv = document.getElementById("entries");
+const openFormBtn = document.getElementById("openFormBtn");
+const openLocBtn = document.getElementById("openLocBtn");
 const modal = document.getElementById("entryModal");
-const formBtn = document.getElementById("openFormBtn");
 const span = document.querySelector(".close");
+const entriesBody = document.getElementById("entriesBody");
+const locationFilter = document.createElement("select");
+locationFilter.id = "locationFilter";
+locationFilter.innerHTML = "<option value=''>All Locations</option>";
+document.body.insertBefore(locationFilter, document.getElementById("entriesTable"));
 
-loginBtn.onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-logoutBtn.onclick = () => signOut(auth);
-
-formBtn.onclick = function() {
-  modal.style.display = "block";
-  document.getElementById("entryForm").reset();
-};
-
-span.onclick = function() {
-  modal.style.display = "none";
-};
-
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
-
-onAuthStateChanged(auth, async (user) => {
+auth.onAuthStateChanged(user => {
   if (user) {
     loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline";
-    formBtn.style.display = "inline";
-    loadEntries(user.uid);
+    logoutBtn.style.display = "inline-block";
+    openFormBtn.style.display = "inline-block";
+    loadLocations();
+    loadEntries();
   } else {
-    loginBtn.style.display = "inline";
+    loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
-    formBtn.style.display = "none";
-    entriesDiv.innerHTML = "";
+    openFormBtn.style.display = "none";
   }
 });
 
-entryForm.onsubmit = async (e) => {
-  e.preventDefault();
-  var user = auth.currentUser;
-  if (!user) return;
-
-  var location = document.getElementById("location").value;
-  var date = document.getElementById("date").value;
-  var weather = document.getElementById("weather").value;
-  var comments = document.getElementById("comments").value;
-  var photoURL = document.getElementById("photo").value;
-
-  await addDoc(collection(db, "work"), {
-    userId: user.uid,
-    location,
-    date,
-    weather,
-    comments,
-    photoURL,
-    createdAt: Date.now()
-  });
-
-  entryForm.reset();
-  loadEntries(user.uid);
+loginBtn.onclick = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider);
 };
 
-async function loadEntries(uid) {
-  entriesDiv.innerHTML = "";
-  const q = query(collection(db, "work"), orderBy("createdAt", "desc"));
-  const snap = await getDocs(q);
-  snap.forEach(doc => {
-    const data = doc.data();
-    if (data.userId !== uid) return;
+logoutBtn.onclick = () => auth.signOut();
 
-    const div = document.createElement("div");
-    div.className = "entry";
-    div.innerHTML = `
-      <strong>${data.location}</strong> - ${data.weather}<br/>
-      <p>${data.comments}</p>
-      <hr/>
-    `;
-    entriesDiv.appendChild(div);
+openFormBtn.onclick = () => {
+  modal.style.display = "block";
+  document.getElementById("entryForm").reset();
+  delete document.getElementById("entryForm").dataset.editingId;
+};
+
+openLocBtn.onclick = () => {
+  modal.style.display = "block";
+  document.getElementById("locForm").reset();
+  delete document.getElementById("locForm").dataset.editingId;
+};
+
+span.onclick = () => modal.style.display = "none";
+window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; };
+
+locationFilter.addEventListener("change", loadEntries);
+
+async function loadLocations() {
+  const snapshot = await db.collection("locations").where("userId", "==", auth.currentUser.uid).get();
+  const locations = new Set();
+  snapshot.forEach(doc => {
+    const entry = doc.data();
+    if (entry.location) locations.add(entry.location);
+  });
+  locationFilter.innerHTML = "<option value=''>All Locations</option>";
+  locations.forEach(loc => {
+    const opt = document.createElement("option");
+    opt.value = loc;
+    opt.textContent = loc;
+    locationFilter.appendChild(opt);
   });
 }
+
+async function loadEntries() {
+  const filter = locationFilter.value;
+  let query = db.collection("entries").where("userId", "==", auth.currentUser.uid);
+  if (filter) query = query.where("location", "==", filter);
+  const snapshot = await query.orderBy("date", "desc").get();
+  entriesBody.innerHTML = "";
+  snapshot.forEach(doc => {
+    const entry = doc.data();
+    entry.id = doc.id;
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${entry.location || "-"}</td>
+      <td>${entry.date?.toDate().toLocaleString() || "-"}</td>
+      <td>${entry.weather || "-"}</td>
+      <td>${entry.comments || "-"}</td>
+      <td>
+        ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Open</a><br>` : ""}
+      </td>
+    `;
+    const actions = document.createElement("td");
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => openEditForm(entry);
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = async () => {
+      if (confirm("Delete this entry?")) {
+        await db.collection("entries").doc(entry.id).delete();
+        loadEntries();
+        loadLocations();
+      }
+    };
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+    row.appendChild(actions);
+    entriesBody.appendChild(row);
+  });
+}
+
+function openEditForm(entry) {
+  modal.style.display = "block";
+  document.getElementById("location").value = entry.location || "";
+  document.getElementById("comments").value = entry.comments || "";
+  document.getElementById("weather").value = entry.weather || "";
+  document.getElementById("photoUrl").value = entry.photoUrl || "";
+  const dateInput = document.getElementById("date");
+  if (entry.date?.toDate) {
+    const dateObj = entry.date.toDate();
+    dateInput.value = dateObj.toISOString().split("T")[0];
+  }
+  document.getElementById("entryForm").dataset.editingId = entry.id;
+}
+
+document.getElementById("locForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const id = form.dataset.editingId;
+  const data = {
+    location: document.getElementById("location").value,
+    userId: auth.currentUser.uid
+  };
+  try {
+    const ref = db.collection("locations");
+    if (id) {
+      await ref.doc(id).update(data);
+    } else {
+      await ref.add(data);
+    }
+    form.reset();
+    delete form.dataset.editingId;
+    modal.style.display = "none";
+    loadLocations();
+  } catch (err) {
+    console.error(err);
+    alert("Error saving location");
+  }
+});
+
+
+document.getElementById("entryForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const id = form.dataset.editingId;
+  const data = {
+    location: document.getElementById("location").value,
+    comments: document.getElementById("comments").value,
+    weather: document.getElementById("weather").value,
+    photoUrl: document.getElementById("photoUrl").value,
+    date: new Date(document.getElementById("date").value),
+    userId: auth.currentUser.uid
+  };
+  try {
+    const ref = db.collection("entries");
+    if (id) {
+      await ref.doc(id).update(data);
+    } else {
+      await ref.add(data);
+    }
+    form.reset();
+    delete form.dataset.editingId;
+    modal.style.display = "none";
+    loadEntries();
+    loadLocations();
+  } catch (err) {
+    console.error(err);
+    alert("Error saving entry");
+  }
+});

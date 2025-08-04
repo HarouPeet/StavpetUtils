@@ -9,6 +9,9 @@ input, textarea, button {
 .entry {
   margin-bottom: 20px;
 }
+.loc {
+  margin-bottom: 20px;
+}
 .modal {
   display: none;
   position: fixed;
@@ -36,4 +39,20 @@ input, textarea, button {
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f2f2f2;
 }
