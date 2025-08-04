@@ -12,6 +12,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  deleteDoc,
+  doc,
   query,
   orderBy,
   getDocs
@@ -68,7 +70,8 @@ window.onclick = (event) => { if (event.target == modal) modal.style.display = "
 locationFilter.addEventListener("change", loadEntries);
 
 async function loadLocations() {
-  const snapshot = await db.collection("locations").where("userId", "==", auth.currentUser.uid).get();
+  const q = query(collection(db, "locations"), where("userId", "==", auth.currentUser.uid), orderBy("name", "asc"));
+  const snapshot = await getDocs(q)
   const locations = new Set();
   snapshot.forEach(doc => {
     const entry = doc.data();
@@ -85,9 +88,16 @@ async function loadLocations() {
 
 async function loadEntries() {
   const filter = locationFilter.value;
-  let query = db.collection("entries").where("userId", "==", auth.currentUser.uid);
-  if (filter) query = query.where("location", "==", filter);
-  const snapshot = await query.orderBy("date", "desc").get();
+  let q = query(collection(db, "work"), 
+          where("userId", "==", auth.currentUser.uid), 
+          orderBy("createdAt", "desc"));
+
+  if (filter) q = query(collection(db, "work"), 
+                        where("userId", "==", auth.currentUser.uid), 
+                        where("location", "==", filter), 
+                        orderBy("createdAt", "desc"));
+
+  const snapshot = await getDocs(q);
   entriesBody.innerHTML = "";
   snapshot.forEach(doc => {
     const entry = doc.data();
@@ -110,7 +120,7 @@ async function loadEntries() {
     deleteBtn.textContent = "🗑️";
     deleteBtn.onclick = async () => {
       if (confirm("Delete this entry?")) {
-        await db.collection("entries").doc(entry.id).delete();
+        await deleteDoc(doc(db, "work", entry.id));
         loadEntries();
         loadLocations();
       }
@@ -145,7 +155,7 @@ document.getElementById("locForm").addEventListener("submit", async (e) => {
     userId: auth.currentUser.uid
   };
   try {
-    const ref = db.collection("locations");
+    const ref = query(collection(db, "location"));
     if (id) {
       await ref.doc(id).update(data);
     } else {
@@ -175,7 +185,7 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
     userId: auth.currentUser.uid
   };
   try {
-    const ref = db.collection("entries");
+    const ref = query(collection(db, "work"));
     if (id) {
       await ref.doc(id).update(data);
     } else {
