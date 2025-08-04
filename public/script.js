@@ -54,7 +54,7 @@ auth.onAuthStateChanged(user => {
 });
 
 loginBtn.onclick = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
+  const provider = new auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
 };
 
