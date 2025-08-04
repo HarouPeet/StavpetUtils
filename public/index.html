@@ -1,26 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Work Journal</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <h1>Work Journal</h1>
   <button id="loginBtn">Login with Google</button>
   <button id="logoutBtn" style="display:none;">Logout</button>
 
-  <form id="entryForm" style="display:none;">
-    <input type="text" id="location" placeholder="Location" required />
-    <input type="text" id="weather" placeholder="Weather" required />
-    <textarea id="comments" placeholder="Comments"></textarea>
-    <input type="file" id="photo" accept="image/*" />
-    <button type="submit">Add Entry</button>
-  </form>
+  <button id="openFormBtn" style="display:none;">➕ Add New Entry</button>
+
+  <div id="entryModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>New Journal Entry</h2>
+      <form id="entryForm">
+        <label>Location:</label><br>
+        <input type="text" id="location" required><br>
+
+        <label>Comments:</label><br>
+        <textarea id="comments" required></textarea><br>
+
+        <label>Weather:</label><br>
+        <input type="text" id="weather"><br>
+
+        <label>Photo URL (Google Drive):</label><br>
+        <input type="url" id="photoUrl"><br>
+
+        <label>Folder URL (optional):</label><br>
+        <input type="url" id="folderUrl"><br><br>
+
+        <button type="submit">Save Entry</button>
+      </form>
+    </div>
+  </div>
 
   <div id="entries"></div>
 
   <script type="module" src="script.js"></script>
 </body>
+
 </html>

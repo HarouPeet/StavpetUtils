@@ -21,6 +21,7 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
+import { } from "/utils.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -31,44 +32,57 @@ const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const entryForm = document.getElementById("entryForm");
 const entriesDiv = document.getElementById("entries");
+const modal = document.getElementById("entryModal");
+const formBtn = document.getElementById("openFormBtn");
+const span = document.querySelector(".close");
 
 loginBtn.onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
 logoutBtn.onclick = () => signOut(auth);
+
+formBtn.onclick = function() {
+  modal.style.display = "block";
+  document.getElementById("entryForm").reset();
+};
+
+span.onclick = function() {
+  modal.style.display = "none";
+};
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+};
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline";
-    entryForm.style.display = "block";
+    formBtn.style.display = "inline";
     loadEntries(user.uid);
   } else {
     loginBtn.style.display = "inline";
     logoutBtn.style.display = "none";
-    entryForm.style.display = "none";
+    formBtn.style.display = "none";
     entriesDiv.innerHTML = "";
   }
 });
 
 entryForm.onsubmit = async (e) => {
   e.preventDefault();
-  const user = auth.currentUser;
+  var user = auth.currentUser;
   if (!user) return;
 
-  const location = document.getElementById("location").value;
-  const weather = document.getElementById("weather").value;
-  const comments = document.getElementById("comments").value;
-  const file = document.getElementById("photo").files[0];
-  let photoURL = "";
+  var location = document.getElementById("location").value;
+  var date = document.getElementById("date").value;
+  var weather = document.getElementById("weather").value;
+  var comments = document.getElementById("comments").value;
+  var photoURL = document.getElementById("photo").value;
 
-  if (file) {
-    const photoRef = ref(storage, `photos/${user.uid}/${Date.now()}_${file.name}`);
-    await uploadBytes(photoRef, file);
-    photoURL = await getDownloadURL(photoRef);
-  }
-
-  await addDoc(collection(db, "entries"), {
+  await addDoc(collection(db, "work"), {
     userId: user.uid,
     location,
+    date,
     weather,
     comments,
     photoURL,
@@ -81,7 +95,7 @@ entryForm.onsubmit = async (e) => {
 
 async function loadEntries(uid) {
   entriesDiv.innerHTML = "";
-  const q = query(collection(db, "entries"), orderBy("createdAt", "desc"));
+  const q = query(collection(db, "work"), orderBy("createdAt", "desc"));
   const snap = await getDocs(q);
   snap.forEach(doc => {
     const data = doc.data();
@@ -92,7 +106,6 @@ async function loadEntries(uid) {
     div.innerHTML = `
       <strong>${data.location}</strong> - ${data.weather}<br/>
       <p>${data.comments}</p>
-      ${data.photoURL ? `<img src="${data.photoURL}" width="200" />` : ""}
       <hr/>
     `;
     entriesDiv.appendChild(div);
