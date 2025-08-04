@@ -1,9 +1,8 @@
-name: Deploy to Firebase Hosting
-on: workflow_dispatch
-permissions:
-  checks: write
-  contents: read
-  pull-requests: write
+name: Deploy to Firebase TEST
+on:
+  push:
+    branches:
+      - main
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
@@ -14,3 +13,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAVPETUTILS }}
           projectId: stavpetutils
+          channelId: test
++
