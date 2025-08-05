@@ -1,5 +1,5 @@
 import { firebaseConfig } from "./firebase-config.js";
-import { } from "/utils.js";
+import { createCustomSelect } from "/utils.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import {
   getAuth,
@@ -21,6 +21,8 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
+export { loadLocations, loadEntries };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -28,17 +30,14 @@ const db = getFirestore(app);
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const openFormBtn = document.getElementById("openFormBtn");
+const resetFilter = document.getElementById("resetFilter");
 const openLocBtn = document.getElementById("openLocBtn");
-const refreshBtn = document.getElementById("refreshBtn");
 const modal = document.getElementById("entryModal");
 const locModal = document.getElementById("locModal");
 const span = document.querySelector(".close");
 const entriesBody = document.getElementById("entriesBody");
-const locationFilter = document.createElement("select");
-const locationList = document.getElementById("location");
-locationFilter.id = "locationFilter";
-locationFilter.innerHTML = "<option value=''>All Locations</option>";
-document.body.insertBefore(locationFilter, document.getElementById("entriesTable"));
+const locationSelect = createCustomSelect("locationSelect", ["All"]);
+const locationSelectForm = createCustomSelect("locationSelectForm", ["All"]);
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -46,7 +45,7 @@ onAuthStateChanged(auth, async (user) => {
     logoutBtn.style.display = "inline-block";
     openFormBtn.style.display = "inline-block";
     openLocBtn.style.display = "inline-block";
-    refreshBtn.style.display = "inline-block";
+    resetFilter.style.display = "inline-block";
     loadLocations();
     loadEntries();
   } else {
@@ -54,12 +53,18 @@ onAuthStateChanged(auth, async (user) => {
     logoutBtn.style.display = "none";
     openFormBtn.style.display = "none";
     openLocBtn.style.display = "none";
-    refreshBtn.style.display = "none";
+    resetFilter.style.display = "none";
+    entriesBody.innerHTML = "";
   }
 });
 
 loginBtn.onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
 logoutBtn.onclick = () => signOut(auth);
+
+resetFilter.onclick = () => {
+  locationSelect.setValue("All");
+  loadEntries("All");
+};
 
 openFormBtn.onclick = () => {
   modal.style.display = "block";
@@ -75,11 +80,6 @@ openLocBtn.onclick = () => {
   delete document.getElementById("locForm").dataset.rawDate;
 };
 
-refreshBtn.onclick = () => {
-  loadLocations();
-  loadEntries();
-}
-
 span.onclick = () => {
   modal.style.display = "none"
   locModal.style.display = "none"
@@ -89,37 +89,27 @@ window.onclick = (event) => {
   if (event.target == locModal) locModal.style.display = "none";
 };
 
-locationFilter.addEventListener("change", loadEntries);
-
+//Load Locations
 async function loadLocations() {
   const q = query(collection(db, "location"), where("userId", "==", auth.currentUser.uid), orderBy("name", "asc"));
   const snapshot = await getDocs(q)
-  const locations = new Set();
+  const locations = new Array();
+  locations.push("All");
+  locationSelect.setOptions(locations);
+  locationSelectForm.setOptions(locations);
   snapshot.forEach(doc => {
     const entry = doc.data();
-    if (entry.name) locations.add(entry.name);
-  });
-  locationFilter.innerHTML = "<option value=''>All Locations</option>";
-  locationList.innerHTML = "";
-  locations.forEach(loc => {
-    const opt = document.createElement("option");
-    opt.value = loc;
-    opt.textContent = loc;
-    const opt2 = document.createElement("option");
-    opt2.value = loc;
-    opt2.textContent = loc;
-    locationList.appendChild(opt2);
-    locationFilter.appendChild(opt);
+    if (entry.name) locations.push(entry.name);
   });
 }
 
-async function loadEntries() {
-  const filter = locationFilter.value;
+//Load Work Entries
+async function loadEntries(filter = "All") {
   let q = query(collection(db, "work"),
     where("userId", "==", auth.currentUser.uid),
     orderBy("date", "desc"));
 
-  if (filter.length > 1) q = query(collection(db, "work"),
+  if (filter != "All") q = query(collection(db, "work"),
     where("userId", "==", auth.currentUser.uid),
     where("location", "==", filter),
     orderBy("date", "desc"));
@@ -151,7 +141,6 @@ async function loadEntries() {
       if (confirm("Delete this entry?")) {
         await deleteData(entry.id, "work");
         loadEntries();
-        loadLocations();
       }
     };
     actions.appendChild(editBtn);
@@ -161,15 +150,17 @@ async function loadEntries() {
   });
 }
 
+//Delete From DB
 async function deleteData(_id, _doc) {
   const docRef = doc(db, _doc, _id);
   await deleteDoc(docRef);
   return true;
 }
 
+//Open Edit Form
 function openEditForm(entry) {
   modal.style.display = "block";
-  document.getElementById("location").value = entry.location || "";
+  locationSelectForm.setValue(entry.location);
   document.getElementById("comments").value = entry.comments || "";
   document.getElementById("weather").value = entry.weather || "";
   document.getElementById("photoUrl").value = entry.photoUrl || "";
@@ -178,6 +169,7 @@ function openEditForm(entry) {
   document.getElementById("entryForm").dataset.editingId = entry.id;
 }
 
+//Listen For Location Submit
 document.getElementById("locForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -197,19 +189,20 @@ document.getElementById("locForm").addEventListener("submit", async (e) => {
     delete form.dataset.editingId;
     locModal.style.display = "none";
     loadLocations();
+    loadEntries();
   } catch (err) {
     console.error(err);
     alert("Error saving location");
   }
 });
 
-
+//Listen For Work Entry Submit
 document.getElementById("entryForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const id = form.dataset.editingId;
   const data = {
-    location: document.getElementById("location").value,
+    location: locationSelectForm.getValue(),
     comments: document.getElementById("comments").value,
     weather: document.getElementById("weather").value,
     photoUrl: document.getElementById("photoUrl").value,
@@ -227,7 +220,6 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
     delete form.dataset.editingId;
     modal.style.display = "none";
     loadEntries();
-    loadLocations();
   } catch (err) {
     console.error(err);
     alert("Error saving entry");

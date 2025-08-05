@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  </link>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Work Journal</title>
@@ -9,13 +10,23 @@
 </head>
 
 <body>
-  <h1>Work Journal</h1>
-  <button id="loginBtn">Login with Google</button>
-  <button id="logoutBtn" style="display:none;">Logout</button>
+  <h1>Stavpet Utils</h1>
+  <div class="top-bar">
+    <div class="auth-buttons">
+      <button id="loginBtn">Login with Google</button>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </div>
 
-  <button id="openFormBtn" style="display:none;">➕ New Work</button>
-  <button id="openLocBtn" style="display:none;">➕ New Location</button>
-  <button id="refreshBtn" style="display:none;">Refresh</button>
+    <div class="action-buttons">
+      <button id="openFormBtn" style="display:none;">➕ New Work</button>
+      <button id="openLocBtn" style="display:none;">➕ New Location</button>
+    </div>
+
+    <div class="filter-row">
+      <div id="locationSelect" class="custom-select-container"></div>
+      <button id="resetFilter" class="reset-btn">Reset</button>
+    </div>
+  </div>
 
   <table id="entriesTable">
     <thead>
@@ -50,7 +61,7 @@
       <h2>New Work Entry</h2>
       <form id="entryForm">
         <label>Location:</label><br>
-        <select id="location" required></select><br>
+        <div id="locationSelectForm" class="custom-select-container"></div><br>
         <label>Date:</label><br>
         <input type="date" id="date" required><br>
         <label>Comments:</label><br>
