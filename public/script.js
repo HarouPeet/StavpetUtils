@@ -34,8 +34,11 @@ const resetFilter = document.getElementById("resetFilter");
 const openLocBtn = document.getElementById("openLocBtn");
 const modal = document.getElementById("entryModal");
 const locModal = document.getElementById("locModal");
+const appContainer = document.getElementById("appContainer");
+const loginScreen = document.getElementById("loginScreen");
 const span = document.querySelector(".close");
 const entriesBody = document.getElementById("entriesBody");
+const entriesBodyLoc = document.getElementById("entriesBodyLoc");
 const locationSelect = createCustomSelect("locationSelect", ["All"]);
 const locationSelectForm = createCustomSelect("locationSelectForm", ["All"]);
 
@@ -43,18 +46,17 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
-    openFormBtn.style.display = "inline-block";
-    openLocBtn.style.display = "inline-block";
-    resetFilter.style.display = "inline-block";
+    appContainer.style.visibility = 'visible';
+    appContainer.style.opacity = '1';
+    loginScreen.style.display = "none";
     loadLocations();
     loadEntries();
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
-    openFormBtn.style.display = "none";
-    openLocBtn.style.display = "none";
-    resetFilter.style.display = "none";
-    entriesBody.innerHTML = "";
+    appContainer.style.visibility = 'hidden';
+    appContainer.style.opacity = '0';
+    loginScreen.style.display = "flex";
   }
 });
 
@@ -89,6 +91,39 @@ window.onclick = (event) => {
   if (event.target == locModal) locModal.style.display = "none";
 };
 
+//Get and Render Locations on Locations Page
+async function createLocationsTable() {
+  const q = query(collection(db, "location"), where("userId", "==", auth.currentUser.uid), orderBy("name", "asc"));
+  const snapshot = await getDocs(q)
+  entriesBodyLoc.innerHTML = "";
+  snapshot.forEach(doc => {
+    const entry = doc.data();
+    entry.id = doc.id;
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${entry.name || "-"}</td>
+    `;
+    const actions = document.createElement("td");
+    actions.classList.add("actionsCenter");
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => openEditLocForm(entry);
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = async () => {
+      if (confirm("Delete this entry?")) {
+        await deleteData(entry.id, "location");
+        createLocationsTable()
+        filterLocList("");
+      }
+    };
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+    row.appendChild(actions);
+    entriesBodyLoc.appendChild(row);
+  });
+}
+
 //Load Locations
 async function loadLocations() {
   const q = query(collection(db, "location"), where("userId", "==", auth.currentUser.uid), orderBy("name", "asc"));
@@ -102,6 +137,7 @@ async function loadLocations() {
     if (entry.name) locations.push(entry.name);
   });
 }
+
 
 //Load Work Entries
 async function loadEntries(filter = "All") {
@@ -132,6 +168,7 @@ async function loadEntries(filter = "All") {
       </td>
     `;
     const actions = document.createElement("td");
+    actions.classList.add("actionsCenter");
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => openEditForm(entry);
@@ -169,6 +206,12 @@ function openEditForm(entry) {
   document.getElementById("entryForm").dataset.editingId = entry.id;
 }
 
+//Open Edit Form Locations
+function openEditLocForm(entry) {
+  locModal.style.display = "block";
+  document.getElementById("locForm").dataset.editingId = entry.id;
+}
+
 //Listen For Location Submit
 document.getElementById("locForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -189,7 +232,8 @@ document.getElementById("locForm").addEventListener("submit", async (e) => {
     delete form.dataset.editingId;
     locModal.style.display = "none";
     loadLocations();
-    loadEntries();
+    createLocationsTable();
+    filterLocList("");
   } catch (err) {
     console.error(err);
     alert("Error saving location");
@@ -224,4 +268,35 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
     console.error(err);
     alert("Error saving entry");
   }
+});
+
+//Search Bar Filter Locations Table
+function filterLocList(_value) {
+  const searchTerm = this._value.toLowerCase();
+  const rows = document.querySelectorAll('#entriesTableLoc tbody tr');
+
+  rows.forEach(row => {
+    const rowText = row.innerText.toLowerCase();
+    row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+  });
+}
+
+//Trigger Locations Search Bar
+document.getElementById('locationSearch').addEventListener('input', function () {
+  filterLocList(this.value || "");
+});
+
+//Switch to Main Page
+document.getElementById('navHome').addEventListener('click', () => {
+  document.getElementById('homeSection').style.display = 'block';
+  document.getElementById('locationsSection').style.display = 'none';
+  locationSelect.setValue("All");
+  loadEntries();
+});
+
+//Switch to Locations Page
+document.getElementById('navLocations').addEventListener('click', () => {
+  document.getElementById('homeSection').style.display = 'none';
+  document.getElementById('locationsSection').style.display = 'block';
+  createLocationsTable();
 });

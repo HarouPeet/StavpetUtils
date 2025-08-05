@@ -10,73 +10,108 @@
 </head>
 
 <body>
-  <h1>Stavpet Utils</h1>
-  <div class="top-bar">
+  <div class="top-bar" id="loginScreen">
     <div class="auth-buttons">
-      <button id="loginBtn">Login with Google</button>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </div>
-
-    <div class="action-buttons">
-      <button id="openFormBtn" style="display:none;">➕ New Work</button>
-      <button id="openLocBtn" style="display:none;">➕ New Location</button>
-    </div>
-
-    <div class="filter-row">
-      <div id="locationSelect" class="custom-select-container"></div>
-      <button id="resetFilter" class="reset-btn">Reset</button>
+      <button id="loginBtn">LOGIN</button>
     </div>
   </div>
+  <div id="appContainer">
+    <div class="sidebar left-sidebar">
+      <h2>STAVPET Utils</h2>
+      <nav>
+        <a href="#" id="navHome">Work</a>
+        <a href="#" id="navLocations">Locations</a>
+      </nav>
+    </div>
+    <div id="homeSection" class="main-content">
+      <h3>Work</h3>
+      <div class="action-buttons">
+        <button id="openFormBtn">➕ New Work</button>
+      </div>
 
-  <table id="entriesTable">
-    <thead>
-      <tr>
-        <th>Location</th>
-        <th>Date</th>
-        <th>Weather</th>
-        <th>Comments</th>
-        <th>Photos</th>
-      </tr>
-    </thead>
-    <tbody id="entriesBody">
-    </tbody>
-  </table>
+      <div class="filter-row">
+        <div id="locationSelect" class="custom-select-container"></div>
+        <button id="resetFilter" class="reset-btn">Reset</button>
+      </div>
 
-  <div id="locModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>New Location</h2>
-      <form id="locForm">
-        <label>Name:</label><br>
-        <input type="text" id="locationName" required><br>
-        <button type="submit">Add</button>
-      </form>
+      <table id="entriesTable">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Date</th>
+            <th>Weather</th>
+            <th>Comments</th>
+            <th>Photos</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="entriesBody">
+        </tbody>
+      </table>
+
+      <div id="entryModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>New Work Entry</h2>
+          <form id="entryForm">
+            <label>Location:</label><br>
+            <div id="locationSelectForm" class="custom-select-container"></div><br>
+            <label>Date:</label><br>
+            <input type="date" id="date" required><br>
+            <label>Comments:</label><br>
+            <textarea id="comments"></textarea><br>
+            <label>Weather:</label><br>
+            <input type="text" id="weather"><br>
+            <label>Photo URL:</label><br>
+            <input type="url" id="photoUrl"><br>
+            <button type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+      <div id="entries"></div>
+    </div>
+    <div id="locationsSection" style="display: none;" class="main-content">
+      <h3>Locations</h3>
+      <div class="action-buttons">
+        <button id="openLocBtn">➕ New Location</button>
+      </div>
+      <div class="filter-row">
+        <input type="text" id="locationSearch" placeholder="Search locations..."
+          style="margin-bottom: 10px; padding: 6px; width: 100%; max-width: 500px;">
+        <button id="resetLocFilter" class="reset-btn">Reset</button>
+      </div>
+      <table id="entriesTableLoc">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="entriesBodyLoc">
+        </tbody>
+      </table>
+      <div id="locModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>New Location</h2>
+          <form id="locForm">
+            <label>Name:</label><br>
+            <input type="text" id="locationName" required><br>
+            <button type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar right-sidebar">
+      <div class="profile-section">
+        <div class="auth-buttons">
+          <button id="logoutBtn" style="display:none;">LOGOUT</button>
+        </div>
+        <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" />
+        <p id="userName">User Name</p>
+      </div>
     </div>
   </div>
-
-
-  <div id="entryModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>New Work Entry</h2>
-      <form id="entryForm">
-        <label>Location:</label><br>
-        <div id="locationSelectForm" class="custom-select-container"></div><br>
-        <label>Date:</label><br>
-        <input type="date" id="date" required><br>
-        <label>Comments:</label><br>
-        <textarea id="comments"></textarea><br>
-        <label>Weather:</label><br>
-        <input type="text" id="weather"><br>
-        <label>Photo URL:</label><br>
-        <input type="url" id="photoUrl"><br>
-        <button type="submit">Add</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="entries"></div>
-
   <script type="module" src="script.js"></script>
 </body>
 

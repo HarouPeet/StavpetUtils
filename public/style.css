@@ -1,17 +1,27 @@
 body {
   font-family: sans-serif;
-  padding: 20px;
 }
 
 input,
-textarea,
 button {
   display: block;
   margin: 10px 0;
 }
 
+textarea {
+  display: block;
+  width: 80%;
+  height: 200px;
+  margin: 10px 0;
+}
+
 .entry {
   margin-bottom: 20px;
+}
+
+#entriesTable,
+#entriesTableLoc {
+  width: 100%;
 }
 
 .loc {
@@ -53,13 +63,12 @@ button {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
 }
 
 th,
 td {
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  border: 1px solid #ccc;
   text-align: left;
   vertical-align: top;
 }
@@ -70,7 +79,8 @@ th {
 
 .custom-select-container {
   position: relative;
-  width: 250px;
+  width: 100%;
+  max-width: 500px;
   font-family: Arial, sans-serif;
 }
 
@@ -110,6 +120,7 @@ th {
 .custom-select-option:hover {
   background: #f0f0f0;
 }
+
 .top-bar {
   display: flex;
   flex-direction: column;
@@ -127,13 +138,13 @@ th {
 }
 
 button {
-  padding: 8px 12px;
+  padding: 8px 8px;
   border: none;
   background-color: #1976d2;
   color: white;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 17px;
   transition: background-color 0.2s ease;
 }
 
@@ -147,4 +158,92 @@ button:hover {
 
 .reset-btn:hover {
   background-color: #666;
+}
+
+#loginScreen {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: #e0e0e0;
+}
+
+#appContainer {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.left-sidebar,
+.right-sidebar {
+  width: 220px;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 20px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 30px;
+}
+
+.sidebar nav {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar nav a {
+  color: white;
+  text-decoration: none;
+  width: 100%;
+  font-size: 20px;
+  padding: 8px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.sidebar nav a:hover {
+  background: #333;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.main-content h3 {
+  margin-top: 20px;
+  font-size: 30px;
+  text-align: center;
+  border-bottom: #1e1e1e;
+}
+
+.top-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.actionsCenter {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.actions-col {
+  white-space: nowrap;
+  width: 1%;
+  height: 100%;
 }
