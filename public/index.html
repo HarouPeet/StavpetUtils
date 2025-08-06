@@ -5,44 +5,48 @@
   </link>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Work Journal</title>
+  <title data-i18n="workJournal"></title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <div class="top-bar" id="loginScreen">
+    <div class="lang-switcher">
+      <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20"> English</button>
+      <button data-lang="sk"><img src="https://flagcdn.com/w40/sk.png" alt="Slovak" height="20"> Slovensky</button>
+    </div>
     <div class="auth-buttons">
-      <button id="loginBtn">LOGIN</button>
+      <button id="loginBtn" class="button-submit" data-i18n="login"></button>
     </div>
   </div>
   <div id="appContainer">
     <div class="sidebar left-sidebar">
-      <h2>STAVPET Utils</h2>
+      <h2>STAVPET</h2>
       <nav>
-        <a href="#" id="navHome">Work</a>
-        <a href="#" id="navLocations">Locations</a>
+        <a href="#" id="navHome" data-i18n="work"></a>
+        <a href="#" id="navLocations" data-i18n="locationsPage"></a>
       </nav>
     </div>
     <div id="homeSection" class="main-content">
-      <h3>Work</h3>
-      <div class="action-buttons">
-        <button id="openFormBtn">➕ New Work</button>
+      <div class="top">
+        <h3 data-i18n="work"></h3>
       </div>
-
-      <div class="filter-row">
-        <div id="locationSelect" class="custom-select-container"></div>
-        <button id="resetFilter" class="reset-btn">Reset</button>
+      <div class="actionItems">
+        <div class="action-buttons">
+          <button id="openFormBtn" data-i18n="newWork" class="button-submit"></button>
+          <div id="locationSelect" class="custom-select-container"></div>
+          <button id="resetFilter" class="reset-btn" data-i18n="reset"></button>
+        </div>
       </div>
-
       <table id="entriesTable">
         <thead>
           <tr>
-            <th>Location</th>
-            <th>Date</th>
-            <th>Weather</th>
-            <th>Comments</th>
-            <th>Photos</th>
-            <th class="actions-col">Actions</th>
+            <th data-i18n="locations"></th>
+            <th data-i18n="date"></th>
+            <th data-i18n="weather"></th>
+            <th data-i18n="comments"></th>
+            <th data-i18n="photos"></th>
+            <th class="actions-col">-</th>
           </tr>
         </thead>
         <tbody id="entriesBody">
@@ -52,39 +56,41 @@
       <div id="entryModal" class="modal">
         <div class="modal-content">
           <span class="close">&times;</span>
-          <h2>New Work Entry</h2>
+          <h2 data-i18n="entryDetails"></h2>
           <form id="entryForm">
-            <label>Location:</label><br>
+            <label data-i18n="locations"></label><br>
             <div id="locationSelectForm" class="custom-select-container"></div><br>
-            <label>Date:</label><br>
+            <label data-i18n="date"></label><br>
             <input type="date" id="date" required><br>
-            <label>Comments:</label><br>
-            <textarea id="comments"></textarea><br>
-            <label>Weather:</label><br>
+            <label data-i18n="weather"></label><br>
             <input type="text" id="weather"><br>
-            <label>Photo URL:</label><br>
-            <input type="url" id="photoUrl"><br>
-            <button type="submit">Add</button>
+            <label data-i18n="comments"></label><br>
+            <textarea id="comments"></textarea><br>
+            <label data-i18n="photos"></label><br>
+            <input type="url" id="photoUrl" style="width: 80%;"><br>
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" data-i18n="submit" class="button-submit"></button>
+              <button type="button" id="cancelWork" data-i18n="cancel" class="button-cancel cancel"></button>
+            </div>
           </form>
         </div>
       </div>
       <div id="entries"></div>
     </div>
     <div id="locationsSection" style="display: none;" class="main-content">
-      <h3>Locations</h3>
-      <div class="action-buttons">
-        <button id="openLocBtn">➕ New Location</button>
+      <div class="top">
+        <h3 data-i18n="locations"></h3>
       </div>
-      <div class="filter-row">
-        <input type="text" id="locationSearch" placeholder="Search locations..."
-          style="margin-bottom: 10px; padding: 6px; width: 100%; max-width: 500px;">
-        <button id="resetLocFilter" class="reset-btn">Reset</button>
+      <div class="action-buttons">
+        <button id="openLocBtn" data-i18n="newLocation" class="button-submit"></button>
+        <input type="text" id="locationSearch" style="margin-bottom: 10px; padding: 6px; width: 100%;">
+        <button id="resetLocFilter" class="reset-btn" data-i18n="reset"></button>
       </div>
       <table id="entriesTableLoc">
         <thead>
           <tr>
-            <th>Name</th>
-            <th class="actions-col">Actions</th>
+            <th data-i18n="name"></th>
+            <th class="actions-col">-</th>
           </tr>
         </thead>
         <tbody id="entriesBodyLoc">
@@ -93,23 +99,31 @@
       <div id="locModal" class="modal">
         <div class="modal-content">
           <span class="close">&times;</span>
-          <h2>New Location</h2>
+          <h2 data-i18n="locationDetails"></h2>
           <form id="locForm">
-            <label>Name:</label><br>
-            <input type="text" id="locationName" required><br>
-            <button type="submit">Add</button>
+            <label data-i18n="name"></label><br>
+            <input type="text" style="width: 80%;" id="locationName" required><br>
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" data-i18n="submit" class="button-submit"></button>
+              <button type="button" id="cancel" data-i18n="cancel" class="button-cancel cancel"></button>
+            </div>
           </form>
         </div>
       </div>
     </div>
     <div class="sidebar right-sidebar">
+      <div class="lang-switcher">
+        <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20" width="40"></button>
+        <button data-lang="sk"><img src="https://flagcdn.com/w40/sk.png" alt="Slovak" height="20" width="40"></button>
+      </div>
       <div class="profile-section">
         <div class="auth-buttons">
-          <button id="logoutBtn" style="display:none;">LOGOUT</button>
+          <button id="logoutBtn" class="button-cancel" data-i18n="logout"></button>
         </div>
         <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" />
-        <p id="userName">User Name</p>
       </div>
+      <div id="userName" style="text-align: center;"></div>
+      <div id="email" style="text-align: center;"></div>
     </div>
   </div>
   <script type="module" src="script.js"></script>

@@ -31,16 +31,19 @@ const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const openFormBtn = document.getElementById("openFormBtn");
 const resetFilter = document.getElementById("resetFilter");
+const resetLocFilter = document.getElementById("resetLocFilter");
 const openLocBtn = document.getElementById("openLocBtn");
 const modal = document.getElementById("entryModal");
 const locModal = document.getElementById("locModal");
 const appContainer = document.getElementById("appContainer");
 const loginScreen = document.getElementById("loginScreen");
-const span = document.querySelector(".close");
+const closeButtons = document.querySelectorAll(".close");
+const cancelBtn = document.querySelectorAll(".cancel");
 const entriesBody = document.getElementById("entriesBody");
 const entriesBodyLoc = document.getElementById("entriesBodyLoc");
 const locationSelect = createCustomSelect("locationSelect", ["All"]);
 const locationSelectForm = createCustomSelect("locationSelectForm", ["All"]);
+const userLang = localStorage.getItem("lang") || "en";
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -51,6 +54,11 @@ onAuthStateChanged(auth, async (user) => {
     loginScreen.style.display = "none";
     loadLocations();
     loadEntries();
+    if (user.photoURL) {
+      document.getElementById("userPhoto").src = user.photoURL;
+    }
+    document.getElementById("userName").textContent = user.displayName;
+    document.getElementById("email").textContent = user.email;
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
@@ -60,6 +68,19 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+loadLanguage(userLang);
+async function loadLanguage(lang) {
+  const res = await fetch(`lang/${lang}.json`);
+  const dict = await res.json();
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (dict[key]) {
+      el.textContent = dict[key];
+    }
+  });
+}
+
 loginBtn.onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
 logoutBtn.onclick = () => signOut(auth);
 
@@ -68,11 +89,17 @@ resetFilter.onclick = () => {
   loadEntries("All");
 };
 
+resetLocFilter.onclick = () => {
+  document.getElementById("locationSearch").value = "";
+  filterLocList("");
+};
+
 openFormBtn.onclick = () => {
   modal.style.display = "block";
   document.getElementById("entryForm").reset();
   delete document.getElementById("entryForm").dataset.editingId;
   delete document.getElementById("entryForm").dataset.rawDate;
+  document.body.style.overflow = "hidden";
 };
 
 openLocBtn.onclick = () => {
@@ -80,16 +107,31 @@ openLocBtn.onclick = () => {
   document.getElementById("locForm").reset();
   delete document.getElementById("locForm").dataset.editingId;
   delete document.getElementById("locForm").dataset.rawDate;
+  document.body.style.overflow = "hidden";
 };
 
-span.onclick = () => {
-  modal.style.display = "none"
-  locModal.style.display = "none"
-};
-window.onclick = (event) => {
+closeButtons.forEach(btn => {
+  closeForm(btn)
+});
+
+cancelBtn.forEach(btn => {
+  closeForm(btn)
+});
+
+function closeForm(_btn) {
+  _btn.addEventListener("click", () => {
+    const modal = _btn.closest(".modal");
+    if (modal) {
+      document.body.style.overflow = "";
+      modal.style.display = "none";
+    }
+  });
+}
+
+/* window.onclick = (event) => {
   if (event.target == modal) modal.style.display = "none";
   if (event.target == locModal) locModal.style.display = "none";
-};
+}; */
 
 //Get and Render Locations on Locations Page
 async function createLocationsTable() {
@@ -110,6 +152,8 @@ async function createLocationsTable() {
     editBtn.onclick = () => openEditLocForm(entry);
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️";
+    editBtn.classList.add("reset-btn");
+    deleteBtn.classList.add("reset-btn");
     deleteBtn.onclick = async () => {
       if (confirm("Delete this entry?")) {
         await deleteData(entry.id, "location");
@@ -174,6 +218,8 @@ async function loadEntries(filter = "All") {
     editBtn.onclick = () => openEditForm(entry);
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️";
+    editBtn.classList.add("reset-btn");
+    deleteBtn.classList.add("reset-btn");
     deleteBtn.onclick = async () => {
       if (confirm("Delete this entry?")) {
         await deleteData(entry.id, "work");
@@ -197,6 +243,7 @@ async function deleteData(_id, _doc) {
 //Open Edit Form
 function openEditForm(entry) {
   modal.style.display = "block";
+  document.body.style.overflow = "hidden";
   locationSelectForm.setValue(entry.location);
   document.getElementById("comments").value = entry.comments || "";
   document.getElementById("weather").value = entry.weather || "";
@@ -209,6 +256,7 @@ function openEditForm(entry) {
 //Open Edit Form Locations
 function openEditLocForm(entry) {
   locModal.style.display = "block";
+  document.body.style.overflow = "hidden";
   document.getElementById("locForm").dataset.editingId = entry.id;
 }
 
@@ -272,7 +320,7 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
 
 //Search Bar Filter Locations Table
 function filterLocList(_value) {
-  const searchTerm = this._value.toLowerCase();
+  const searchTerm = _value.toLowerCase();
   const rows = document.querySelectorAll('#entriesTableLoc tbody tr');
 
   rows.forEach(row => {
@@ -298,5 +346,15 @@ document.getElementById('navHome').addEventListener('click', () => {
 document.getElementById('navLocations').addEventListener('click', () => {
   document.getElementById('homeSection').style.display = 'none';
   document.getElementById('locationsSection').style.display = 'block';
+  document.getElementById('locationSearch').value = "";
   createLocationsTable();
+});
+
+//Language Switch Listeners
+document.querySelectorAll('[data-lang]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    const lang = btn.getAttribute("data-lang");
+    localStorage.setItem("lang", lang);
+    loadLanguage(lang);
+  });
 });

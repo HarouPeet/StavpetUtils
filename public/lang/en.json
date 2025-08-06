@@ -1,0 +1,21 @@
+{
+    "workJournal": "Work Journal",
+    "login": "Login",
+    "logout": "Logout",
+    "newWork": "➕ New Work",
+    "newLocation": "➕ New Location",
+    "locations": "Locations",
+    "locationsPage": "Locations",
+    "work": "Work",
+    "reset": "Reset",
+    "comments": "Comments",
+    "weather": "Weather",
+    "date": "Date",
+    "photos": "Photos",
+    "entryDetails": "Entry Details",
+    "locationDetails": "Location Details",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "name": "Location",
+    "userName": "User Name"
+}

@@ -1,0 +1,21 @@
+{
+    "workJournal": "Stavebný denník",
+    "login": "Prihlásiť",
+    "logout": "Odhlásiť",
+    "newWork": "➕ Nová Práca",
+    "newLocation": "➕ Nová Adresa",
+    "locationsPage": "Zoznam adries",
+    "locations": "Adresa",
+    "work": "Stavebný denník",
+    "reset": "Reset",
+    "comments": "Popis",
+    "weather": "Počasie",
+    "date": "Dátum",
+    "photos": "Fotky",
+    "entryDetails": "Detaily Práce",
+    "locationDetails": "Detaily Adresy",
+    "submit": "Potvrdiť",
+    "cancel": "Zrušiť",
+    "name": "Adresa",
+    "userName": "Uživateľ"
+}

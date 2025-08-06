@@ -1,5 +1,14 @@
 body {
   font-family: sans-serif;
+  margin: 0px;
+}
+
+.actionItems {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: left;
 }
 
 input,
@@ -79,8 +88,7 @@ th {
 
 .custom-select-container {
   position: relative;
-  width: 100%;
-  max-width: 500px;
+  width: 90%;
   font-family: Arial, sans-serif;
 }
 
@@ -96,7 +104,7 @@ th {
   width: 100%;
   border: 1px solid #ccc;
   border-top: none;
-  max-height: 150px;
+  max-height: 300px;
   overflow-y: auto;
   background: #fff;
   display: none;
@@ -129,10 +137,17 @@ th {
   font-family: Arial, sans-serif;
 }
 
-.auth-buttons,
-.action-buttons,
+.action-buttons {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
 .filter-row {
   display: flex;
+  width: 100%;
   gap: 10px;
   align-items: center;
 }
@@ -140,7 +155,7 @@ th {
 button {
   padding: 8px 8px;
   border: none;
-  background-color: #1976d2;
+  background-color: #4949497c;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -148,12 +163,8 @@ button {
   transition: background-color 0.2s ease;
 }
 
-button:hover {
-  background-color: #145ca1;
-}
-
 .reset-btn {
-  background-color: #888;
+  background-color: #1f1f1f;
 }
 
 .reset-btn:hover {
@@ -175,51 +186,13 @@ button:hover {
   overflow: hidden;
 }
 
-.left-sidebar,
-.right-sidebar {
-  width: 220px;
-  background-color: #1e1e1e;
-  color: white;
-  padding: 20px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.sidebar h2 {
-  margin-top: 0;
-  font-size: 30px;
-}
-
-.sidebar nav {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sidebar nav a {
-  color: white;
-  text-decoration: none;
-  width: 100%;
-  font-size: 20px;
-  padding: 8px 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.sidebar nav a:hover {
-  background: #333;
-}
-
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   padding: 20px;
   background-color: #f4f4f4;
+  overflow-y: scroll;
 }
 
 .main-content h3 {
@@ -246,4 +219,132 @@ button:hover {
   white-space: nowrap;
   width: 1%;
   height: 100%;
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s;
+}
+
+.lang-btn:hover {
+  transform: scale(1.1);
+}
+
+button:hover {
+  background-color: #616161;
+}
+
+.button-cancel {
+  background-color: #740000;
+  color: white;
+}
+
+.button-cancel:hover {
+  background-color: #ac3939;
+}
+
+.button-submit {
+  white-space: nowrap;
+  background-color: rgb(59, 108, 199);
+  color: white;
+}
+
+.button-submit:hover {
+  background-color: rgb(89, 124, 189);
+}
+
+.top {
+  padding-top: 0px;
+  width: 100%;
+  background-color: #1e1e1e;
+  color: white;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.left-sidebar {
+  width: 220px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  color: white;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.right-sidebar {
+  width: 220px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  color: white;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 30px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+}
+
+.sidebar nav {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+  width: 90%;
+  margin-right: 20px;
+  gap: 2px;
+}
+
+.sidebar nav a {
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  padding: 24px 8px 4px;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  transition: background 0.2s;
+}
+
+.sidebar nav a:hover {
+  background: #333;
+}
+
+.auth-buttons {
+  padding-left: 0px;
+  padding-right: 0px;
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+html {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.no-scroll {
+  overflow: hidden;
 }
