@@ -51,7 +51,7 @@ textarea {
 }
 
 .modal-content {
-  background-color: #fff;
+  background-color: var(--background-color);
   margin: auto;
   padding: 20px;
   width: 90%;
@@ -80,10 +80,12 @@ td {
   border: 1px solid #ccc;
   text-align: left;
   vertical-align: top;
+  background-color: #f2f2f2;
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: var(--primary-color);
+  color: #f2f2f2;
 }
 
 .custom-select-container {
@@ -132,7 +134,6 @@ th {
 .top-bar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   padding: 10px;
   font-family: Arial, sans-serif;
 }
@@ -155,7 +156,7 @@ th {
 button {
   padding: 8px 8px;
   border: none;
-  background-color: #4949497c;
+  background-color: var(--button-color);
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -164,11 +165,11 @@ button {
 }
 
 .reset-btn {
-  background-color: #1f1f1f;
+  background-color: var(--button-color);
 }
 
 .reset-btn:hover {
-  background-color: #666;
+  background-color: var(--button-color-hover);
 }
 
 #loginScreen {
@@ -176,7 +177,7 @@ button {
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background: #e0e0e0;
+  background: var(--background-color);
 }
 
 #appContainer {
@@ -191,12 +192,12 @@ button {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: var(--background-color);
   overflow-y: scroll;
 }
 
 .main-content h3 {
-  margin-top: 20px;
+  margin-top: 30px;
   font-size: 30px;
   text-align: center;
   border-bottom: #1e1e1e;
@@ -204,7 +205,6 @@ button {
 
 .top-bar {
   display: flex;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -240,32 +240,32 @@ button {
 }
 
 button:hover {
-  background-color: #616161;
+  background-color: var(--button-color-hover);
 }
 
 .button-cancel {
-  background-color: #740000;
+  background-color: var(--button-color-cancel);
   color: white;
 }
 
 .button-cancel:hover {
-  background-color: #ac3939;
+  background-color: var(--button-color-cancel-hover);
 }
 
 .button-submit {
   white-space: nowrap;
-  background-color: rgb(59, 108, 199);
+  background-color: var(--button-color);
   color: white;
 }
 
 .button-submit:hover {
-  background-color: rgb(89, 124, 189);
+  background-color: var(--button-color-hover);
 }
 
 .top {
   padding-top: 0px;
   width: 100%;
-  background-color: #1e1e1e;
+  background-color: var(--primary-color);
   color: white;
   flex-shrink: 0;
   display: flex;
@@ -275,7 +275,7 @@ button:hover {
 
 .left-sidebar {
   width: 220px;
-  background-color: #1e1e1e;
+  background-color: var(--primary-color);
   padding: 20px;
   color: white;
   flex-shrink: 0;
@@ -286,7 +286,7 @@ button:hover {
 
 .right-sidebar {
   width: 220px;
-  background-color: #1e1e1e;
+  background-color: var(--primary-color);
   padding: 20px;
   color: white;
   flex-shrink: 0;
@@ -327,7 +327,7 @@ button:hover {
 }
 
 .sidebar nav a:hover {
-  background: #333;
+  background: var(--primary-color-hover);
 }
 
 .auth-buttons {
@@ -347,4 +347,57 @@ html {
 
 .no-scroll {
   overflow: hidden;
+}
+
+.bottomSidebar {
+  position: absolute;
+  bottom: 0;
+  padding: 20px;
+}
+
+.profile-section {
+  text-align: center;
+}
+
+:root {
+  --primary-color: #243642;
+  --primary-color-hover: #324a5a;
+  --background-color: #E2F1E7;
+  --button-color: #387478;
+  --button-color-hover: #4c9fa5;
+  --button-color-cancel: #7e3939;
+  --button-color-cancel-hover: #ad6262c0;
+}
+
+.login-button {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 80px;
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-bar {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+h4 {
+  color: white;
+  text-align: center;
+  font-size: 80px;
+  background-color: var(--primary-color);
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }

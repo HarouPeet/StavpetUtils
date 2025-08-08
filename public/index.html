@@ -7,25 +7,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="workJournal"></title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 </head>
 
 <body>
-  <div class="top-bar" id="loginScreen">
+  <div class="login-bar" id="loginScreen">
+    <h4>STAVPET</h4>
+    <div class="login-button">
+      <button id="loginBtn" class="button-submit" data-i18n="login" style="width: 250px; height: 100px; text-align: center; font-size: 40px;"></button>
+    </div>
     <div class="lang-switcher">
       <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20"> English</button>
       <button data-lang="sk"><img src="https://flagcdn.com/w40/sk.png" alt="Slovak" height="20"> Slovensky</button>
     </div>
-    <div class="auth-buttons">
-      <button id="loginBtn" class="button-submit" data-i18n="login"></button>
-    </div>
   </div>
   <div id="appContainer">
     <div class="sidebar left-sidebar">
+      <div class="lang-switcher">
+        <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20" width="40"></button>
+        <button data-lang="sk"><img src="https://flagcdn.com/w40/sk.png" alt="Slovak" height="20" width="40"></button>
+      </div>
       <h2>STAVPET</h2>
       <nav>
         <a href="#" id="navHome" data-i18n="work"></a>
         <a href="#" id="navLocations" data-i18n="locationsPage"></a>
       </nav>
+      <div class="bottomSidebar">
+        <div class="profile-section">
+          <div id="userName" style="text-align: center; padding-bottom: 10px;"></div>
+<!--           <div id="email" style="text-align: center; padding-bottom: 10px;"></div> -->
+          <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" style="size: 50px;"/>
+          <div class="auth-buttons">
+            <button id="logoutBtn" class="button-cancel" data-i18n="logout"></button>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="homeSection" class="main-content">
       <div class="top">
@@ -34,6 +51,7 @@
       <div class="actionItems">
         <div class="action-buttons">
           <button id="openFormBtn" data-i18n="newWork" class="button-submit"></button>
+          <button id="exportPdf" class="button-submit" data-i18n="exportPdf"></button>
           <div id="locationSelect" class="custom-select-container"></div>
           <button id="resetFilter" class="reset-btn" data-i18n="reset"></button>
         </div>
@@ -79,7 +97,7 @@
     </div>
     <div id="locationsSection" style="display: none;" class="main-content">
       <div class="top">
-        <h3 data-i18n="locations"></h3>
+        <h3 data-i18n="locationsPage"></h3>
       </div>
       <div class="action-buttons">
         <button id="openLocBtn" data-i18n="newLocation" class="button-submit"></button>
@@ -110,20 +128,6 @@
           </form>
         </div>
       </div>
-    </div>
-    <div class="sidebar right-sidebar">
-      <div class="lang-switcher">
-        <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20" width="40"></button>
-        <button data-lang="sk"><img src="https://flagcdn.com/w40/sk.png" alt="Slovak" height="20" width="40"></button>
-      </div>
-      <div class="profile-section">
-        <div class="auth-buttons">
-          <button id="logoutBtn" class="button-cancel" data-i18n="logout"></button>
-        </div>
-        <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" />
-      </div>
-      <div id="userName" style="text-align: center;"></div>
-      <div id="email" style="text-align: center;"></div>
     </div>
   </div>
   <script type="module" src="script.js"></script>

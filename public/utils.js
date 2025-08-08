@@ -81,3 +81,60 @@ function createCustomSelect(containerId, initialOptions, placeholder = "Filter")
     }
   };
 }
+
+const exportPdfBtn = document.getElementById("exportPdf");
+
+exportPdfBtn.onclick = () => {
+  exportEntriesPDF();
+};
+
+function exportEntriesPDF() {
+  const table = document.getElementById('entriesTable');
+  const headers = [];
+  const body = [];
+
+  const headerCells = table.querySelectorAll('thead th');
+  for (let i = 0; i < 4; i++) {
+    headers.push(headerCells[i].innerText.trim());
+  }
+
+  body.push(headers);
+
+  for (let row of table.tBodies[0].rows) {
+    const rowData = [];
+    for (let i = 0; i < 4; i++) {
+      rowData.push(row.cells[i].innerText.trim());
+    }
+    body.push(rowData);
+  }
+
+  const docDefinition = {
+    content: [
+      { text: document.getElementById("navHome").textContent, style: 'header' },
+      {
+        table: {
+          headerRows: 1,
+          widths: ['*', 'auto', 'auto', '*'],
+          body: body
+        },
+        layout: {
+          fillColor: function (rowIndex) {
+            return rowIndex === 0 ? '#CCCCCC' : null;
+          },
+          hLineColor: () => '#000000',
+          vLineColor: () => '#000000',
+          paddingLeft: () => 5,
+          paddingRight: () => 5
+        }
+      }
+    ],
+    styles: {
+      header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10], alignment: 'center' }
+    },
+    defaultStyle: {
+      fontSize: 12
+    }
+  };
+
+  pdfMake.createPdf(docDefinition).open();
+}

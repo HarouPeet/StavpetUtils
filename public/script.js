@@ -58,7 +58,7 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById("userPhoto").src = user.photoURL;
     }
     document.getElementById("userName").textContent = user.displayName;
-    document.getElementById("email").textContent = user.email;
+//    document.getElementById("email").textContent = user.email;
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
@@ -146,7 +146,8 @@ async function createLocationsTable() {
       <td>${entry.name || "-"}</td>
     `;
     const actions = document.createElement("td");
-    actions.classList.add("actionsCenter");
+    const actionsDiv = document.createElement("div");
+    actionsDiv.classList.add("actionsCenter");
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => openEditLocForm(entry);
@@ -161,8 +162,9 @@ async function createLocationsTable() {
         filterLocList("");
       }
     };
-    actions.appendChild(editBtn);
-    actions.appendChild(deleteBtn);
+    actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(deleteBtn);
+    actions.appendChild(actionsDiv);
     row.appendChild(actions);
     entriesBodyLoc.appendChild(row);
   });
@@ -208,11 +210,12 @@ async function loadEntries(filter = "All") {
       <td>${entry.weather || "-"}</td>
       <td>${entry.comments || "-"}</td>
       <td>
-        ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Open</a><br>` : ""}
+        ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Link</a><br>` : ""}
       </td>
     `;
     const actions = document.createElement("td");
-    actions.classList.add("actionsCenter");
+    const actionsDiv = document.createElement("div");
+    actionsDiv.classList.add("actionsCenter");
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => openEditForm(entry);
@@ -226,8 +229,9 @@ async function loadEntries(filter = "All") {
         loadEntries();
       }
     };
-    actions.appendChild(editBtn);
-    actions.appendChild(deleteBtn);
+    actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(deleteBtn);
+    actions.appendChild(actionsDiv);
     row.appendChild(actions);
     entriesBody.appendChild(row);
   });
@@ -258,6 +262,7 @@ function openEditLocForm(entry) {
   locModal.style.display = "block";
   document.body.style.overflow = "hidden";
   document.getElementById("locForm").dataset.editingId = entry.id;
+  document.getElementById("locationName").value = entry.name || "";
 }
 
 //Listen For Location Submit

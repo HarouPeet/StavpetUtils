@@ -17,5 +17,6 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "name": "Location",
-    "userName": "User Name"
+    "userName": "User Name",
+    "exportPdf": "Export"
 }

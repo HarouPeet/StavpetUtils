@@ -17,5 +17,6 @@
     "submit": "Potvrdiť",
     "cancel": "Zrušiť",
     "name": "Adresa",
-    "userName": "Uživateľ"
+    "userName": "Uživateľ",
+    "exportPdf": "Exportovať"
 }
