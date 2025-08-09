@@ -12,7 +12,7 @@ const db = admin.firestore();
 
 async function main() {
   const city = "Bratislava";
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric&lang=sk`;
 
   try {
     const res = await fetch(url);
