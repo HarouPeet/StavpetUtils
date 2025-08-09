@@ -35,6 +35,7 @@ const resetLocFilter = document.getElementById("resetLocFilter");
 const openLocBtn = document.getElementById("openLocBtn");
 const modal = document.getElementById("entryModal");
 const locModal = document.getElementById("locModal");
+const datePicker = document.getElementById("date")
 const appContainer = document.getElementById("appContainer");
 const loginScreen = document.getElementById("loginScreen");
 const closeButtons = document.querySelectorAll(".close");
@@ -43,6 +44,7 @@ const entriesBody = document.getElementById("entriesBody");
 const entriesBodyLoc = document.getElementById("entriesBodyLoc");
 const locationSelect = createCustomSelect("locationSelect", ["All"]);
 const locationSelectForm = createCustomSelect("locationSelectForm", ["All"]);
+const weatherSelect = document.getElementById('weatherSelect');
 const userLang = localStorage.getItem("lang") || "en";
 
 onAuthStateChanged(auth, async (user) => {
@@ -58,7 +60,7 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById("userPhoto").src = user.photoURL;
     }
     document.getElementById("userName").textContent = user.displayName;
-//    document.getElementById("email").textContent = user.email;
+    //    document.getElementById("email").textContent = user.email;
   } else {
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
@@ -100,6 +102,7 @@ openFormBtn.onclick = () => {
   delete document.getElementById("entryForm").dataset.editingId;
   delete document.getElementById("entryForm").dataset.rawDate;
   document.body.style.overflow = "hidden";
+  weatherSelect.innerHTML = "";
 };
 
 openLocBtn.onclick = () => {
@@ -128,10 +131,44 @@ function closeForm(_btn) {
   });
 }
 
-/* window.onclick = (event) => {
-  if (event.target == modal) modal.style.display = "none";
-  if (event.target == locModal) locModal.style.display = "none";
-}; */
+//Get Weather Data From Firestore
+async function getWeatherData(_date) {
+  const day = new Date(_date);
+  const start = new Date(day);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(day);
+  end.setHours(23, 59, 59, 999);
+
+  const q = query(collection(db, "weatherData"), where("timestamp", ">=", start),
+    where("timestamp", "<=", end)
+  );
+
+  const querySnapshot = await getDocs(q);
+  const weatherData = new Array();
+  weatherSelect.innerHTML = "";
+  const dummyOption = document.createElement('option');
+  const res = await fetch(`lang/${userLang}.json`);
+  const dict = await res.json();
+  dummyOption.textContent = dict.selectWeather;
+  weatherSelect.appendChild(dummyOption);
+  querySnapshot.forEach((doc) => {
+    const entry = doc.data();
+    const option = document.createElement('option');
+    const timestamp = entry.timestamp.toDate();
+    const hours = String(timestamp.getHours()).padStart(2, "0");
+    const minutes = String(timestamp.getMinutes()).padStart(2, "0");
+    const timeString = `${hours}:${minutes}`;
+    var dataWeather = "Error";
+    if (entry.data.weather) {
+      dataWeather = entry.data.weather[0].description;
+      dataWeather = dataWeather[0].toUpperCase() + dataWeather.slice(1);
+    }
+    const weatherValue = `${dataWeather}, ${entry.data.main.temp_min.toString().split(".")[0]}°C - ${entry.data.main.temp_max.toString().split(".")[0]}°C`
+    option.value = weatherValue;
+    option.textContent = `[${timeString}] ${weatherValue}`;
+    weatherSelect.appendChild(option);
+  });
+}
 
 //Get and Render Locations on Locations Page
 async function createLocationsTable() {
@@ -205,11 +242,11 @@ async function loadEntries(filter = "All") {
     const _date = new Date(entry.date);
     const formattedDate = `${_date.getDate()}.${_date.getMonth() + 1}.${_date.getFullYear()}`;
     row.innerHTML = `
-      <td>${entry.location || "-"}</td>
-      <td>${formattedDate || "-"}</td>
-      <td>${entry.weather || "-"}</td>
-      <td>${entry.comments || "-"}</td>
-      <td>
+      <td class="locationTd">${entry.location || "-"}</td>
+      <td class="dateTd">${formattedDate || "-"}</td>
+      <td class="weatherTd">${entry.weather || "-"}</td>
+      <td class="commentsTd">${entry.comments || "-"}</td>
+      <td class="photoTd">
         ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Link</a><br>` : ""}
       </td>
     `;
@@ -255,6 +292,7 @@ function openEditForm(entry) {
   document.getElementById("date").value = entry.date;
 
   document.getElementById("entryForm").dataset.editingId = entry.id;
+  getWeatherData(entry.date);
 }
 
 //Open Edit Form Locations
@@ -316,7 +354,10 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
     form.reset();
     delete form.dataset.editingId;
     modal.style.display = "none";
-    loadEntries();
+    if (locationSelect.getValue().length > 0)
+      loadEntries(locationSelect.getValue());
+    else
+      loadEntries();
   } catch (err) {
     console.error(err);
     alert("Error saving entry");
@@ -362,4 +403,12 @@ document.querySelectorAll('[data-lang]').forEach(btn => {
     localStorage.setItem("lang", lang);
     loadLanguage(lang);
   });
+});
+
+datePicker.addEventListener('change', () => {
+  getWeatherData(datePicker.value)
+});
+
+weatherSelect.addEventListener('change', () => {
+  if (weatherSelect.value.includes("°")) document.getElementById("weather").value = weatherSelect.value;
 });

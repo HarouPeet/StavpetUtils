@@ -1,7 +1,7 @@
 name: Fetch Weather
 on:
   schedule:
-    - cron: "0 4,10,14 * * *"
+    - cron: "0 6,10,14 * * *"
   workflow_dispatch:
 jobs:
   get-weather:

@@ -18,5 +18,6 @@
     "cancel": "Cancel",
     "name": "Location",
     "userName": "User Name",
-    "exportPdf": "Export"
+    "exportPdf": "Export",
+    "selectWeather": "Select Timeframe"
 }

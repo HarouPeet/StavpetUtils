@@ -114,7 +114,7 @@ function exportEntriesPDF() {
       {
         table: {
           headerRows: 1,
-          widths: ['*', 'auto', 'auto', '*'],
+          widths: ['*', 'auto', 100, '*'],
           body: body
         },
         layout: {

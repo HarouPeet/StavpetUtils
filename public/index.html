@@ -15,7 +15,8 @@
   <div class="login-bar" id="loginScreen">
     <h4>STAVPET</h4>
     <div class="login-button">
-      <button id="loginBtn" class="button-submit" data-i18n="login" style="width: 250px; height: 100px; text-align: center; font-size: 40px;"></button>
+      <button id="loginBtn" class="button-submit" data-i18n="login"
+        style="width: 250px; height: 100px; text-align: center; font-size: 40px;"></button>
     </div>
     <div class="lang-switcher">
       <button data-lang="en"><img src="https://flagcdn.com/w40/gb.png" alt="English" height="20"> English</button>
@@ -36,8 +37,8 @@
       <div class="bottomSidebar">
         <div class="profile-section">
           <div id="userName" style="text-align: center; padding-bottom: 10px;"></div>
-<!--           <div id="email" style="text-align: center; padding-bottom: 10px;"></div> -->
-          <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" style="size: 50px;"/>
+          <!--           <div id="email" style="text-align: center; padding-bottom: 10px;"></div> -->
+          <img id="userPhoto" src="https://via.placeholder.com/80" alt="Profile" style="size: 50px;" />
           <div class="auth-buttons">
             <button id="logoutBtn" class="button-cancel" data-i18n="logout"></button>
           </div>
@@ -79,13 +80,16 @@
             <label data-i18n="locations"></label><br>
             <div id="locationSelectForm" class="custom-select-container"></div><br>
             <label data-i18n="date"></label><br>
-            <input type="date" id="date" required><br>
+            <input type="date" id="date" style="padding-left: 10px; font-size: 20px; height: 40px;" required><br>
             <label data-i18n="weather"></label><br>
-            <input type="text" id="weather"><br>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="text" id="weather" style="width: 46%; height: 35px;">
+              <select id="weatherSelect" style="width: 46%; height: 41px;"></select><br>
+            </div>
             <label data-i18n="comments"></label><br>
             <textarea id="comments"></textarea><br>
             <label data-i18n="photos"></label><br>
-            <input type="url" id="photoUrl" style="width: 80%;"><br>
+            <input type="url" id="photoUrl" style="height: 30px; width: 94%;" wrap="soft"><br>
             <div style="display: flex; gap: 10px;">
               <button type="submit" data-i18n="submit" class="button-submit"></button>
               <button type="button" id="cancelWork" data-i18n="cancel" class="button-cancel cancel"></button>
