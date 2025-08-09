@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 const admin = require("firebase-admin");
 
 const weatherApiKey = process.env.WEATHER_KEY;
-const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_STAVPETUTILS);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
