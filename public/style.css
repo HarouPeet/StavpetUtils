@@ -20,7 +20,7 @@ button {
 textarea {
   display: block;
   width: 94%;
-  height: 200px;
+  height: 80px;
   margin: 10px 0;
 }
 
@@ -41,7 +41,7 @@ textarea {
   display: none;
   position: fixed;
   z-index: 99;
-  padding-top: 60px;
+  padding-top: 20px;
   left: 0;
   top: 0;
   width: 100%;
@@ -96,7 +96,11 @@ td {
 }
 
 .commentsTd{
-  max-width: 300px;
+  max-width: 150px;
+}
+
+.noteTd{
+  max-width: 150px;
 }
 
 .photoTd{
@@ -109,6 +113,7 @@ th {
 }
 
 .custom-select-container {
+  padding-top: 10px;
   position: relative;
   width: 90%;
   font-family: Arial, sans-serif;
@@ -280,6 +285,10 @@ button:hover {
 
 .button-submit:hover {
   background-color: var(--button-color-hover);
+}
+
+.button-submit:disabled {
+  background-color: #4b4b4b;
 }
 
 .top {

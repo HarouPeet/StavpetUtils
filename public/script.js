@@ -246,6 +246,7 @@ async function loadEntries(filter = "All") {
       <td class="dateTd">${formattedDate || "-"}</td>
       <td class="weatherTd">${entry.weather || "-"}</td>
       <td class="commentsTd">${entry.comments || "-"}</td>
+      <td class="noteTd">${entry.note || "-"}</td>
       <td class="photoTd">
         ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Link</a><br>` : ""}
       </td>
@@ -272,6 +273,11 @@ async function loadEntries(filter = "All") {
     row.appendChild(actions);
     entriesBody.appendChild(row);
   });
+  if (locationSelect.getValue() == "All" || locationSelect.getValue() == "" || entriesBody.innerHTML == "") {
+    document.getElementById("exportPdf").disabled = true;
+  } else {
+    document.getElementById("exportPdf").disabled = false;
+  }
 }
 
 //Delete From DB
@@ -287,6 +293,7 @@ function openEditForm(entry) {
   document.body.style.overflow = "hidden";
   locationSelectForm.setValue(entry.location);
   document.getElementById("comments").value = entry.comments || "";
+  document.getElementById("note").value = entry.note || "";
   document.getElementById("weather").value = entry.weather || "";
   document.getElementById("photoUrl").value = entry.photoUrl || "";
   document.getElementById("date").value = entry.date;
@@ -339,6 +346,7 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
   const data = {
     location: locationSelectForm.getValue(),
     comments: document.getElementById("comments").value,
+    note: document.getElementById("note").value,
     weather: document.getElementById("weather").value,
     photoUrl: document.getElementById("photoUrl").value,
     date: document.getElementById("date").value,

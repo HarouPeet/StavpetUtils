@@ -19,5 +19,6 @@
     "name": "Adresa",
     "userName": "Uživateľ",
     "exportPdf": "Exportovať",
-    "selectWeather": "Dostupné záznamy"
+    "selectWeather": "Dostupné záznamy",
+    "note": "Poznámka"
 }

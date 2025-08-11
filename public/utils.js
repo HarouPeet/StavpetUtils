@@ -9,7 +9,7 @@ function convertDriveLink(originalUrl) {
   return originalUrl;
 }
 
-function createCustomSelect(containerId, initialOptions, placeholder = "Filter") {
+function createCustomSelect(containerId, initialOptions, placeholder = "All") {
   const container = document.getElementById(containerId);
   container.innerHTML = `
       <div class="custom-select-display">${placeholder}</div>
@@ -92,27 +92,46 @@ function exportEntriesPDF() {
   const table = document.getElementById('entriesTable');
   const headers = [];
   const body = [];
+  const docTitle = document.getElementById("navHome").textContent;
 
   const headerCells = table.querySelectorAll('thead th');
-  for (let i = 0; i < 4; i++) {
+  for (let i = 1; i < 5; i++) {
     headers.push(headerCells[i].innerText.trim());
   }
 
   body.push(headers);
-
+  
   for (let row of table.tBodies[0].rows) {
     const rowData = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 1; i < 5; i++) {
       rowData.push(row.cells[i].innerText.trim());
     }
     body.push(rowData);
   }
+  var locationHeader = document.querySelector('.locationTd').textContent;
 
   const docDefinition = {
+    header: function () {
+      return {
+        stack: [
+          { text: docTitle, style: 'headerTitle', alignment: 'center', fontSize: 18, bold: true },
+          { text: locationHeader, style: 'headerTitle', alignment: 'center', fontSize: 16 },
+        ],
+        margin: [0, 10, 0, 0]
+      };
+    },
+    footer: function (currentPage, pageCount) {
+      return {
+        text: currentPage + ' / ' + pageCount,
+        alignment: 'center',
+        fontSize: 9,
+        margin: [0, 10, 0, 0]
+      };
+    },
     content: [
-      { text: document.getElementById("navHome").textContent, style: 'header' },
       {
         table: {
+          dontBreakRows: true,
           headerRows: 1,
           widths: ['*', 'auto', 100, '*'],
           body: body
@@ -133,7 +152,8 @@ function exportEntriesPDF() {
     },
     defaultStyle: {
       fontSize: 12
-    }
+    },
+    pageMargins: [40, 60, 40, 60]
   };
 
   pdfMake.createPdf(docDefinition).open();

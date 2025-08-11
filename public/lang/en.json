@@ -19,5 +19,6 @@
     "name": "Location",
     "userName": "User Name",
     "exportPdf": "Export",
-    "selectWeather": "Select Timeframe"
+    "selectWeather": "Select Timeframe",
+    "note": "Note"
 }
