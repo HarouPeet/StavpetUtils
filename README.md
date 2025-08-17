@@ -52,13 +52,13 @@ It helps track work activities with weather context, quick location selection, a
 
 ---
 
-## 🔐 Authentication & Security
+## Authentication & Security
 
 - Only signed-in Google accounts can access the app  
 - Firestore security rules ensure only authenticated users can read/write data  
 
 ---
 
-## 📜 License
+## License
 
 MIT License. See [LICENSE](./LICENSE) for details.  
