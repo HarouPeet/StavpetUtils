@@ -280,8 +280,8 @@ async function loadEntries(filter = "All") {
       const photoCount = entry.photoUrl.split(",").length;
 
       photoCellContent = `
-    <button class="reset-btn view-photos-btn" onclick="openPhotoGallery('${entry.photoUrl}')" style="background-color: #f0f0f0; border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
-      View (${photoCount})
+    <button class="view-photos-btn" onclick="openPhotoGallery('${entry.photoUrl}', '${entry.id}')">
+      Foto (${photoCount})
     </button>
   `;
     }
@@ -291,7 +291,7 @@ async function loadEntries(filter = "All") {
       <td class="weatherTd">${entry.weather || "-"}</td>
       <td class="commentsTd">${entry.comments || "-"}</td>
       <td class="noteTd">${entry.note || "-"}</td>
-<td class="photoTd" style="text-align: center;">
+<td class="photoTd">
     ${photoCellContent}
   </td>
     `;
@@ -310,8 +310,8 @@ async function loadEntries(filter = "All") {
       try {
         const duplicatedData = {
           location: entry.location || "",
-          comments: entry.comments ? `${entry.comments} (Copy)` : "",
-          note: entry.note || "",
+          comments: entry.comments || "",
+          note: entry.note ? `${entry.note} (Copy)` : "",
           weather: entry.weather || "",
           photoUrl: entry.photoUrl || "",
           date: entry.date,
@@ -384,40 +384,127 @@ function openEditLocForm(entry) {
 }
 
 // Photo preview
-window.openPhotoGallery = function (photoUrlString) {
-  if (!photoUrlString) return;
+window.openPhotoGallery = function (photoUrlString, docId) {
+  if (!photoUrlString || !docId) return;
+
+  const galleryModal = document.getElementById("galleryModal");
+  const galleryGrid = document.getElementById("galleryGrid");
+  const closeGallery = document.getElementById("closeGallery");
+  const deleteAllBtn = document.getElementById("deleteAllPhotosBtn");
+
+  if (!galleryModal || !galleryGrid) return;
 
   galleryGrid.innerHTML = "";
+  let urls = photoUrlString.split(",").map(url => url.trim()).filter(url => url !== "");
 
-  const urls = photoUrlString.split(",");
+  async function updatePhotosInDatabase(updatedUrlsArray) {
+    const newUrlString = updatedUrlsArray.join(",");
+    const docRef = doc(db, "work", docId);
+
+    try {
+      await updateDoc(docRef, { photoUrl: newUrlString });
+
+      if (updatedUrlsArray.length === 0) {
+        galleryModal.style.display = "none";
+        document.body.style.overflow = "auto";
+      } else {
+        window.openPhotoGallery(newUrlString, docId);
+      }
+
+      if (typeof loadEntries === "function") {
+        if (locationSelect && locationSelect.getValue().length > 0) {
+          loadEntries(locationSelect.getValue());
+        } else {
+          loadEntries();
+        }
+      }
+    } catch (err) {
+      console.error("Error updating photos:", err);
+      alert("Failed to delete photo from database.");
+    }
+  }
+
+  deleteAllBtn.onclick = async () => {
+    if (confirm("Are you sure you want to delete ALL photos for this entry?")) {
+      await updatePhotosInDatabase([]);
+    }
+  };
+
+  const totalPhotos = urls.length;
+  galleryGrid.style.gridTemplateColumns = totalPhotos === 1 ? "1fr" : "repeat(auto-fit, minmax(180px, 1fr))";
 
   urls.forEach((url, index) => {
+    // 1. Card Container (Set position to relative so the button aligns to it)
     const container = document.createElement("div");
-    container.style.cssText = "border: 1px solid #ddd; padding: 5px; border-radius: 6px; background: #f9f9f9;";
+    container.style.cssText = "position: relative; border: 1px solid #ddd; padding: 8px; border-radius: 8px; background: #f9f9f9; display: flex; justify-content: center; align-items: center; overflow: hidden;";
 
+    // 2. Image Element
     const img = document.createElement("img");
     img.src = url;
     img.alt = `Photo ${index + 1}`;
-    img.style.cssText = "width: 100%; height: 120px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: transform 0.2s;";
-
+    img.style.cssText = totalPhotos === 1
+      ? "width: 100%; max-height: 400px; object-fit: contain; border-radius: 6px; cursor: pointer;"
+      : "width: 100%; height: 160px; object-fit: cover; border-radius: 6px; cursor: pointer;";
     img.onclick = () => window.open(url, "_blank");
 
-    img.onmouseenter = () => img.style.transform = "scale(1.03)";
-    img.onmouseleave = () => img.style.transform = "scale(1.0)";
+    // 3. Floating Delete Button (Positioned absolutely over the top-right)
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "&times;"; // Displays a bold custom 'X' multiplication symbol
+    deleteBtn.title = "Delete photo";
+    deleteBtn.style.cssText = `
+      position: absolute;
+      top: 2px;
+      right: 14px;
+      width: 26px;
+      height: 26px;
+      background: rgba(220, 53, 69, 0.9); /* Translucent danger red */
+      color: white;
+      border: none;
+      border-radius: 50%; /* Perfect circle */
+      font-size: 18px;
+      line-height: 22px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+      transition: transform 0.1s, background 0.1s;
+      padding: 0;
+    `;
 
+    // Simple hover micro-interactions
+    deleteBtn.onmouseenter = () => deleteBtn.style.transform = "scale(1.1)";
+    deleteBtn.onmouseleave = () => deleteBtn.style.transform = "scale(1.0)";
+
+    deleteBtn.onclick = async (e) => {
+      e.stopPropagation(); // Stops the image click action from firing simultaneously
+      if (confirm("Delete this photo?")) {
+        const filteredUrls = urls.filter((_, i) => i !== index);
+        await updatePhotosInDatabase(filteredUrls);
+      }
+    };
+
+    // Append items back to structural canvas
     container.appendChild(img);
+    container.appendChild(deleteBtn);
     galleryGrid.appendChild(container);
   });
 
   galleryModal.style.display = "block";
   document.body.style.overflow = "hidden";
+
+  if (closeGallery) {
+    closeGallery.onclick = () => {
+      galleryModal.style.display = "none";
+      document.body.style.overflow = "auto";
+    };
+  }
 };
 
 //Image upload
 async function uploadToImgbb(file) {
   if (!file) return "";
 
-  const apiKey = "__IMGBBB_API_KEY__"; // Put your actual API key here
+  //const apiKey = "__IMGBBB_API_KEY__";
+  const apiKey = "5fbd0c6cc1608bec7099fa08e8b12e61";
   const formData = new FormData();
   formData.append("image", file);
 
@@ -472,12 +559,11 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const id = form.dataset.editingId;
-  
+
   const fileInput = document.getElementById("photoFile");
-  let existingUrls = document.getElementById("photoUrl").value;
+  let uploadedUrlArray = [];
 
   try {
-    let uploadedUrlArray = [];
 
     if (fileInput && fileInput.files.length > 0) {
 
@@ -489,21 +575,18 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
       }
     }
 
-    let finalPhotoUrls = "";
-    if (uploadedUrlArray.length > 0) {
-      finalPhotoUrls = uploadedUrlArray.join(",");
-      if (id && existingUrls) {
-        finalPhotoUrls = `${existingUrls},${finalPhotoUrls}`;
-      }
-    } else {
-      finalPhotoUrls = existingUrls;
-    }
+    const currentHiddenUrlValue = document.getElementById("photoUrl") ? document.getElementById("photoUrl").value : "";
+
+    const calculatedUrls = uploadedUrlArray.length > 0
+      ? (id && currentHiddenUrlValue.trim() !== "" ? `${currentHiddenUrlValue},${uploadedUrlArray.join(",")}` : uploadedUrlArray.join(","))
+      : (id ? currentHiddenUrlValue : "");
+
     const data = {
       location: locationSelectForm.getValue(),
       comments: document.getElementById("comments").value,
       note: document.getElementById("note").value,
       weather: document.getElementById("weather").value,
-      photoUrl: finalPhotoUrl,
+      photoUrl: calculatedUrls,
       date: document.getElementById("date").value,
       userId: auth.currentUser.uid
     };

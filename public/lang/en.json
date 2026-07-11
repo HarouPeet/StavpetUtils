@@ -23,5 +23,7 @@
     "note": "Note",
     "client": "Client",
     "provider": "Provider",
-    "attached_photos": "Attached Photos"
+    "attached_photos": "Attached Photos",
+    "view": "View",
+    "delete_all": "Delete All"
 }

@@ -122,20 +122,34 @@ function exportEntriesPDF() {
     },
     footer: function (currentPage, pageCount) {
       return {
+        margin: [40, 0, 40, 0],
         columns: [
           {
             text: currentPage + ' / ' + pageCount,
-            alignment: 'left'
+            alignment: 'left',
+            margin: [0, 28, 0, 0]
           },
           {
-            stack: [
-              { text: '_________________' },
-              { text: 'Zhotoviteľ' },
-              { text: '' },
-              { text: '_________________' },
-              { text: 'Objednávateľ' }
+            columns: [
+              {
+                stack: [
+                  { text: '_______________________' },
+                  { text: 'Zhotoviteľ', fontSize: 8 }
+                ],
+                alignment: 'center'
+              },
+              {
+                stack: [
+                  { text: '_______________________' },
+                  { text: 'Objednávateľ', fontSize: 8 }
+                ],
+                alignment: 'center'
+              }
             ],
-            alignment: 'right'
+            columnGap: 20,
+            alignment: 'right',
+            width: 'auto',
+            margin: [0, 25, 0, 0]
           }
         ]
       };
