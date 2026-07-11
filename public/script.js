@@ -46,6 +46,16 @@ const locationSelect = createCustomSelect("locationSelect", ["All"]);
 const locationSelectForm = createCustomSelect("locationSelectForm", ["All"]);
 const weatherSelect = document.getElementById('weatherSelect');
 const userLang = localStorage.getItem("lang") || "en";
+const galleryModal = document.getElementById("galleryModal");
+const galleryGrid = document.getElementById("galleryGrid");
+const closeGallery = document.getElementById("closeGallery");
+
+if (closeGallery) {
+  closeGallery.onclick = () => {
+    galleryModal.style.display = "none";
+    document.body.style.overflow = "";
+  };
+}
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -99,6 +109,8 @@ resetLocFilter.onclick = () => {
 openFormBtn.onclick = () => {
   modal.style.display = "block";
   document.getElementById("entryForm").reset();
+  const fileInput = document.getElementById("photoFile");
+  if (fileInput) fileInput.value = "";
   delete document.getElementById("entryForm").dataset.editingId;
   delete document.getElementById("entryForm").dataset.rawDate;
   document.body.style.overflow = "hidden";
@@ -188,6 +200,27 @@ async function createLocationsTable() {
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => openEditLocForm(entry);
+
+    //Copy
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "📋";
+    copyBtn.classList.add("reset-btn");
+    copyBtn.onclick = async () => {
+      try {
+        const duplicatedData = {
+          name: entry.name ? `${entry.name} (Copy)` : "New Copy",
+          userId: auth.currentUser.uid
+        };
+        await addDoc(collection(db, "location"), duplicatedData);
+        loadLocations();
+        createLocationsTable();
+        filterLocList("");
+      } catch (err) {
+        console.error(err);
+        alert("Error");
+      }
+    };
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️";
     editBtn.classList.add("reset-btn");
@@ -200,6 +233,7 @@ async function createLocationsTable() {
       }
     };
     actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(copyBtn);
     actionsDiv.appendChild(deleteBtn);
     actions.appendChild(actionsDiv);
     row.appendChild(actions);
@@ -241,15 +275,25 @@ async function loadEntries(filter = "All") {
     const row = document.createElement("tr");
     const _date = new Date(entry.date);
     const formattedDate = `${_date.getDate()}.${_date.getMonth() + 1}.${_date.getFullYear()}`;
+    let photoCellContent = "-";
+    if (entry.photoUrl && entry.photoUrl.trim() !== "") {
+      const photoCount = entry.photoUrl.split(",").length;
+
+      photoCellContent = `
+    <button class="reset-btn view-photos-btn" onclick="openPhotoGallery('${entry.photoUrl}')" style="background-color: #f0f0f0; border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+      View (${photoCount})
+    </button>
+  `;
+    }
     row.innerHTML = `
       <td class="locationTd">${entry.location || "-"}</td>
       <td class="dateTd">${formattedDate || "-"}</td>
       <td class="weatherTd">${entry.weather || "-"}</td>
       <td class="commentsTd">${entry.comments || "-"}</td>
       <td class="noteTd">${entry.note || "-"}</td>
-      <td class="photoTd">
-        ${entry.photoUrl ? `<a href="${entry.photoUrl}" target="_blank">Link</a><br>` : ""}
-      </td>
+<td class="photoTd" style="text-align: center;">
+    ${photoCellContent}
+  </td>
     `;
     const actions = document.createElement("td");
     const actionsDiv = document.createElement("div");
@@ -257,6 +301,34 @@ async function loadEntries(filter = "All") {
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => openEditForm(entry);
+
+    //Copy
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "📋";
+    copyBtn.classList.add("reset-btn");
+    copyBtn.onclick = async () => {
+      try {
+        const duplicatedData = {
+          location: entry.location || "",
+          comments: entry.comments ? `${entry.comments} (Copy)` : "",
+          note: entry.note || "",
+          weather: entry.weather || "",
+          photoUrl: entry.photoUrl || "",
+          date: entry.date,
+          userId: auth.currentUser.uid
+        };
+        await addDoc(collection(db, "work"), duplicatedData);
+
+        if (locationSelect.getValue().length > 0)
+          loadEntries(locationSelect.getValue());
+        else
+          loadEntries();
+      } catch (err) {
+        console.error(err);
+        alert("Error");
+      }
+    };
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️";
     editBtn.classList.add("reset-btn");
@@ -268,6 +340,7 @@ async function loadEntries(filter = "All") {
       }
     };
     actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(copyBtn);
     actionsDiv.appendChild(deleteBtn);
     actions.appendChild(actionsDiv);
     row.appendChild(actions);
@@ -310,6 +383,62 @@ function openEditLocForm(entry) {
   document.getElementById("locationName").value = entry.name || "";
 }
 
+// Photo preview
+window.openPhotoGallery = function (photoUrlString) {
+  if (!photoUrlString) return;
+
+  galleryGrid.innerHTML = "";
+
+  const urls = photoUrlString.split(",");
+
+  urls.forEach((url, index) => {
+    const container = document.createElement("div");
+    container.style.cssText = "border: 1px solid #ddd; padding: 5px; border-radius: 6px; background: #f9f9f9;";
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = `Photo ${index + 1}`;
+    img.style.cssText = "width: 100%; height: 120px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: transform 0.2s;";
+
+    img.onclick = () => window.open(url, "_blank");
+
+    img.onmouseenter = () => img.style.transform = "scale(1.03)";
+    img.onmouseleave = () => img.style.transform = "scale(1.0)";
+
+    container.appendChild(img);
+    galleryGrid.appendChild(container);
+  });
+
+  galleryModal.style.display = "block";
+  document.body.style.overflow = "hidden";
+};
+
+//Image upload
+async function uploadToImgbb(file) {
+  if (!file) return "";
+
+  const apiKey = "__IMGBBB_API_KEY__"; // Put your actual API key here
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error("Imgbb upload failed");
+    }
+
+    const result = await response.json();
+    return result.data.url;
+  } catch (error) {
+    console.error("Error uploading to Imgbb:", error);
+    throw error;
+  }
+}
+
 //Listen For Location Submit
 document.getElementById("locForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -343,16 +472,40 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const id = form.dataset.editingId;
-  const data = {
-    location: locationSelectForm.getValue(),
-    comments: document.getElementById("comments").value,
-    note: document.getElementById("note").value,
-    weather: document.getElementById("weather").value,
-    photoUrl: document.getElementById("photoUrl").value,
-    date: document.getElementById("date").value,
-    userId: auth.currentUser.uid
-  };
+  const fileInput = document.getElementById("photoFile");
+  let finalPhotoUrl = document.getElementById("photoUrl").value; // Fallback to existing if editing
+
   try {
+    let uploadedUrlArray = [];
+
+    if (fileInput && fileInput.files.length > 0) {
+
+      for (const file of fileInput.files) {
+        const url = await uploadToImgbb(file);
+        if (url) {
+          uploadedUrlArray.push(url);
+        }
+      }
+    }
+
+    let finalPhotoUrls = "";
+    if (uploadedUrlArray.length > 0) {
+      finalPhotoUrls = uploadedUrlArray.join(",");
+      if (id && existingUrls) {
+        finalPhotoUrls = `${existingUrls},${finalPhotoUrls}`;
+      }
+    } else {
+      finalPhotoUrls = existingUrls;
+    }
+    const data = {
+      location: locationSelectForm.getValue(),
+      comments: document.getElementById("comments").value,
+      note: document.getElementById("note").value,
+      weather: document.getElementById("weather").value,
+      photoUrl: finalPhotoUrl,
+      date: document.getElementById("date").value,
+      userId: auth.currentUser.uid
+    };
     if (id) {
       const docRef = doc(db, "work", id);
       await updateDoc(docRef, data);
@@ -360,6 +513,7 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
       await addDoc(collection(db, "work"), data);
     }
     form.reset();
+    if (fileInput) fileInput.value = "";
     delete form.dataset.editingId;
     modal.style.display = "none";
     if (locationSelect.getValue().length > 0)
@@ -368,7 +522,7 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
       loadEntries();
   } catch (err) {
     console.error(err);
-    alert("Error saving entry");
+    alert("Error");
   }
 });
 

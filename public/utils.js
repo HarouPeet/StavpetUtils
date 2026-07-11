@@ -100,7 +100,7 @@ function exportEntriesPDF() {
   }
 
   body.push(headers);
-  
+
   for (let row of table.tBodies[0].rows) {
     const rowData = [];
     for (let i = 1; i < 5; i++) {
@@ -122,10 +122,22 @@ function exportEntriesPDF() {
     },
     footer: function (currentPage, pageCount) {
       return {
-        text: currentPage + ' / ' + pageCount,
-        alignment: 'center',
-        fontSize: 9,
-        margin: [0, 10, 0, 0]
+        columns: [
+          {
+            text: currentPage + ' / ' + pageCount,
+            alignment: 'left'
+          },
+          {
+            stack: [
+              { text: '_________________' },
+              { text: 'Zhotoviteľ' },
+              { text: '' },
+              { text: '_________________' },
+              { text: 'Objednávateľ' }
+            ],
+            alignment: 'right'
+          }
+        ]
       };
     },
     content: [
@@ -133,7 +145,7 @@ function exportEntriesPDF() {
         table: {
           dontBreakRows: true,
           headerRows: 1,
-          widths: ['*', 'auto', 100, '*'],
+          widths: [50, 70, '*', 100],
           body: body
         },
         layout: {
@@ -151,7 +163,7 @@ function exportEntriesPDF() {
       header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10], alignment: 'center' }
     },
     defaultStyle: {
-      fontSize: 12
+      fontSize: 10
     },
     pageMargins: [40, 60, 40, 60]
   };

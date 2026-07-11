@@ -1,3 +1,6 @@
+name: Inject Imgbb API Key
+        run: |
+          sed -i 's/__IMGBBB_API_KEY__/${{ secrets.IMGBBB_API_KEY }}/g' public/script.js
 name: Deploy to Firebase TEST
 on: 
   workflow_dispatch:

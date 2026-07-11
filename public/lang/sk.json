@@ -2,9 +2,9 @@
     "workJournal": "Stavebný denník",
     "login": "Prihlásiť",
     "logout": "Odhlásiť",
-    "newWork": "➕ Nová Práca",
-    "newLocation": "➕ Nová Adresa",
-    "locationsPage": "Zoznam adries",
+    "newWork": "➕ Denný záznam",
+    "newLocation": "➕ Nová Zákazka",
+    "locationsPage": "Zákazky",
     "locations": "Adresa",
     "work": "Stavebný denník",
     "reset": "Reset",
@@ -20,5 +20,8 @@
     "userName": "Uživateľ",
     "exportPdf": "Exportovať",
     "selectWeather": "Dostupné záznamy",
-    "note": "Poznámka"
+    "note": "Poznámka",
+    "client": "Objednávateľ",
+    "provider": "Zhotoviteľ",
+    "attached_photos": "Priložené fotografie"
 }

@@ -20,5 +20,8 @@
     "userName": "User Name",
     "exportPdf": "Export",
     "selectWeather": "Select Timeframe",
-    "note": "Note"
+    "note": "Note",
+    "client": "Client",
+    "provider": "Provider",
+    "attached_photos": "Attached Photos"
 }

@@ -91,8 +91,11 @@
             <textarea id="comments"></textarea><br>
             <label data-i18n="note"></label><br>
             <textarea id="note"></textarea><br>
-            <label data-i18n="photos"></label><br>
-            <input type="url" id="photoUrl" style="height: 30px; width: 94%;" wrap="soft"><br>
+            <label for="photoFile">Attach Photo:</label>
+            <input type="file" id="photoFile" accept="image/*" multiple>
+            <input type="hidden" id="photoUrl">
+            <!--label data-i18n="photos"></label><br-->
+            <!--input type="url" id="photoUrl" style="height: 30px; width: 94%;" wrap="soft"><br-->
             <div style="display: flex; gap: 10px;">
               <button type="submit" data-i18n="submit" class="button-submit"></button>
               <button type="button" id="cancelWork" data-i18n="cancel" class="button-cancel cancel"></button>
@@ -133,6 +136,16 @@
               <button type="button" id="cancel" data-i18n="cancel" class="button-cancel cancel"></button>
             </div>
           </form>
+        </div>
+      </div>
+      <div id="galleryModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px; text-align: center;">
+          <span class="close" id="closeGallery">&times;</span>
+          <h3 data-i18n="attached_photos">Attached Photos</h3>
+          <hr>
+          <div id="galleryGrid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; max-height: 70vh; overflow-y: auto;">
+          </div>
         </div>
       </div>
     </div>
