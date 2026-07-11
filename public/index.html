@@ -65,7 +65,7 @@
             <th data-i18n="weather"></th>
             <th data-i18n="comments"></th>
             <th data-i18n="note"></th>
-            <th data-i18n="photos"></th>
+            <th data-i18n="photos" class="photos-col"></th>
             <th class="actions-col">-</th>
           </tr>
         </thead>
@@ -103,6 +103,21 @@
           </form>
         </div>
       </div>
+      <div id="galleryModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px; width: 90%; text-align: center;">
+          <span class="close" id="closeGallery">&times;</span>
+          <h3 data-i18n="attached_photos">Attached Photos</h3>
+          <button data-i18n="delete_all" id="deleteAllPhotosBtn" class="button-cancel"
+            style="margin: 10px 0; padding: 6px 12px; font-size: 14px;">
+            Delete All Photos
+          </button>
+
+          <hr>
+          <div id="galleryGrid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; max-height: 70vh; overflow-y: auto;">
+          </div>
+        </div>
+      </div>
       <div id="entries"></div>
     </div>
     <div id="locationsSection" style="display: none;" class="main-content">
@@ -136,16 +151,6 @@
               <button type="button" id="cancel" data-i18n="cancel" class="button-cancel cancel"></button>
             </div>
           </form>
-        </div>
-      </div>
-      <div id="galleryModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 600px; text-align: center;">
-          <span class="close" id="closeGallery">&times;</span>
-          <h3 data-i18n="attached_photos">Attached Photos</h3>
-          <hr>
-          <div id="galleryGrid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; max-height: 70vh; overflow-y: auto;">
-          </div>
         </div>
       </div>
     </div>

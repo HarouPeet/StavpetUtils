@@ -23,5 +23,7 @@
     "note": "Poznámka",
     "client": "Objednávateľ",
     "provider": "Zhotoviteľ",
-    "attached_photos": "Priložené fotografie"
+    "attached_photos": "Priložené fotografie",
+    "view": "Ukázať",
+    "delete_all": "Vymazať všetko"
 }
