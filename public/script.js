@@ -472,8 +472,9 @@ document.getElementById("entryForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
   const id = form.dataset.editingId;
+  
   const fileInput = document.getElementById("photoFile");
-  let finalPhotoUrl = document.getElementById("photoUrl").value; // Fallback to existing if editing
+  let existingUrls = document.getElementById("photoUrl").value;
 
   try {
     let uploadedUrlArray = [];
