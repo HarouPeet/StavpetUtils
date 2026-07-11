@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # This ensures it only deploys on a manual run
 
 jobs:
-  build_and_preview:
+  deploy_live_website:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -16,6 +16,6 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAVPETUTILS }}
-          projectId: stavpetutils
-          channelId: test
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAVPETUTILS_TEST }}
+          projectId: stavpetutils-test
+          channelId: live

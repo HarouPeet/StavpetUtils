@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "stavpetutils"
+    "default": "stavpetutils",
+    "test": "stavpetutils-test"
   }
 }
