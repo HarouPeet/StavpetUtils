@@ -57,7 +57,7 @@ It helps track work activities with weather context, quick location selection, a
 - Only signed-in Google accounts can access the app  
 - Firestore security rules ensure only authenticated users can read/write data  
 
----
+----
 
 ## License
 
